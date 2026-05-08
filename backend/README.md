@@ -8,7 +8,7 @@ FastAPI + MySQL backend for the website CMS.
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
@@ -39,3 +39,7 @@ python -m app.seed
 - `DELETE /api/cms/entries/{id}`
 
 CMS endpoints require `Authorization: Bearer <token>`.
+
+## reg.ru / ISPmanager
+
+If the hosting shell says `pip: command not found`, use `python3 -m pip` or a virtual environment. See [REG_RU_ISPMANAGER.md](REG_RU_ISPMANAGER.md).
