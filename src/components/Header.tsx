@@ -5,6 +5,7 @@ import { Link, useLocation } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { company } from "../content/siteData";
 import { languages, type Lang, useI18n } from "../i18n";
+import { useCmsContent } from "../cms";
 
 type SearchItem = {
   title: string;
@@ -21,6 +22,7 @@ export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
   const { lang, setLang, t } = useI18n();
+  const cms = useCmsContent();
   const transparent = pathname === "/" && !scrolled && !open && !megaOpen && !searchOpen;
 
   useEffect(() => {
@@ -50,7 +52,7 @@ export default function Header() {
       to: "/services",
       section: t.nav[1].label,
     }));
-    const projects = t.projects.groups.flatMap((group: any) =>
+    const projects = cms.projectsGroups.flatMap((group: any) =>
       group.projects.map((project: any) => ({
         title: project.title,
         text: `${project.region} · ${project.scope}`,
@@ -58,14 +60,14 @@ export default function Header() {
         section: group.type,
       }))
     );
-    const articles = t.research.articles.map((article: any) => ({
+    const articles = cms.researchArticles.map((article: any) => ({
       title: article.title,
       text: article.excerpt,
       to: "/research",
       section: t.research.title,
     }));
     return [...nav, ...services, ...projects, ...articles];
-  }, [t]);
+  }, [cms.projectsGroups, cms.researchArticles, t]);
 
   const results = useMemo(() => {
     const normalized = query.trim().toLowerCase();

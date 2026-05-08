@@ -11,14 +11,16 @@ import heroDroneImg from "../assets/presentation/image14.jpeg";
 import heroTopoImg from "../assets/presentation/image3.jpeg";
 import Layout from "../layouts/MainLayout";
 import { useI18n } from "../i18n";
+import { useCmsContent } from "../cms";
 
 const heroImages = [heroFieldImg, heroDroneImg, heroTopoImg];
 const serviceIcons = [Mountain, Activity, Zap, Plane, Database, FlaskConical];
 
 export default function Home() {
   const { t } = useI18n();
+  const cms = useCmsContent();
   const [activeSlide, setActiveSlide] = useState(0);
-  const featuredProjects = useMemo(() => t.projects.groups.flatMap((group: any) => group.projects).slice(0, 3), [t]);
+  const featuredProjects = useMemo(() => cms.projectsGroups.flatMap((group: any) => group.projects).slice(0, 3), [cms.projectsGroups]);
   const slide = t.home.heroSlides[activeSlide];
 
   useEffect(() => {

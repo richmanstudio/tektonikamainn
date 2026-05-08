@@ -3,13 +3,15 @@ import { useMemo, useState } from "react";
 import Layout from "../layouts/MainLayout";
 import { company } from "../content/siteData";
 import { useI18n } from "../i18n";
+import { useCmsContent } from "../cms";
 
 export default function Careers() {
   const { t } = useI18n();
+  const cms = useCmsContent();
   const [query, setQuery] = useState("");
   const filtered = useMemo(
-    () => t.vacancies.filter((vacancy: any) => vacancy.title.toLowerCase().includes(query.trim().toLowerCase())),
-    [query, t.vacancies]
+    () => cms.vacancies.filter((vacancy: any) => vacancy.title.toLowerCase().includes(query.trim().toLowerCase())),
+    [query, cms.vacancies]
   );
 
   return (

@@ -3,13 +3,15 @@ import { useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import Layout from "../layouts/MainLayout";
 import { useI18n } from "../i18n";
+import { useCmsContent } from "../cms";
 
 export default function Projects() {
   const { t } = useI18n();
+  const cms = useCmsContent();
   const [searchParams, setSearchParams] = useSearchParams();
   const allProjects = useMemo(
-    () => t.projects.groups.flatMap((group: any) => group.projects.map((project: any) => ({ ...project, group: group.type }))),
-    [t]
+    () => cms.projectsGroups.flatMap((group: any) => group.projects.map((project: any) => ({ ...project, group: group.type }))),
+    [cms.projectsGroups]
   );
   const years = useMemo(() => [t.common.all, ...Array.from(new Set(allProjects.map((project: any) => project.year))).sort((a: any, b: any) => b - a)], [allProjects, t.common.all]);
   const regions = useMemo(() => [t.common.all, ...Array.from(new Set(allProjects.map((project: any) => project.region)))], [allProjects, t.common.all]);
@@ -48,7 +50,7 @@ export default function Projects() {
         <div className="site-container grid gap-5 xl:grid-cols-3">
           <FilterGroup
             label={t.projects.title}
-            items={[t.common.all, ...t.projects.groups.map((group: any) => group.type)]}
+            items={[t.common.all, ...cms.projectsGroups.map((group: any) => group.type)]}
             active={activeGroup}
             onSelect={(value) => setFilter("type", value)}
             activeClass="bg-[#0b4fa3] text-white"

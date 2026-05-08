@@ -1,9 +1,11 @@
 import { ArrowRight, CalendarDays, UserRound } from "lucide-react";
 import Layout from "../layouts/MainLayout";
 import { useI18n } from "../i18n";
+import { useCmsContent } from "../cms";
 
 export default function Research() {
   const { t } = useI18n();
+  const cms = useCmsContent();
 
   return (
     <Layout>
@@ -21,11 +23,11 @@ export default function Research() {
               <div className="kicker-line mb-5" />
               <h2 className="text-3xl font-extrabold text-slate-950 md:text-5xl">{t.research.articlesTitle}</h2>
             </div>
-            <div className="text-sm font-semibold text-slate-500">{t.research.articles.length} / {t.research.articlesTitle}</div>
+            <div className="text-sm font-semibold text-slate-500">{cms.researchArticles.length} / {t.research.articlesTitle}</div>
           </div>
 
           <div className="grid gap-5">
-            {t.research.articles.map((article: any, index: number) => (
+            {cms.researchArticles.map((article: any, index: number) => (
               <article key={article.title} className="group grid gap-6 border-t border-slate-200 py-8 md:grid-cols-[170px_1fr_180px] md:items-start">
                 <div className="text-sm font-bold text-slate-500">
                   <span className="inline-flex items-center gap-2"><CalendarDays className="h-4 w-4 text-[#0b4fa3]" />{article.date}</span>
