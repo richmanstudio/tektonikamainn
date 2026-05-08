@@ -6,10 +6,30 @@
 
 ## 1. Проверить Python
 
+Backend рассчитан на современный Python. Используйте Python `3.10+`, лучше `3.11` или `3.12`.
+
 ```bash
 python3 --version
 python3 -m pip --version
 ```
+
+Если при установке зависимостей видите ошибку вида:
+
+```text
+No matching distribution found for fastapi==0.115.6
+```
+
+значит команда `python` или `python3` запускает слишком старую версию Python. Проверьте доступные версии:
+
+```bash
+python --version
+python3 --version
+python3.10 --version
+python3.11 --version
+python3.12 --version
+```
+
+Дальше используйте самую новую доступную команду. Например, если есть `python3.11`, все команды ниже выполняйте через нее.
 
 Если `python3 -m pip --version` пишет, что pip не установлен, попробуйте:
 
@@ -26,11 +46,13 @@ python3 -m pip install --user --upgrade pip
 
 ```bash
 cd /var/www/u3171937/data/backend
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
+
+Если `python3.11` недоступен, замените его на доступную новую версию, например `python3.10` или `python3.12`.
 
 После активации окружения команда `python -m pip` должна работать даже если просто `pip` недоступен.
 
