@@ -1,13 +1,76 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight, Mail, MapPin, Phone, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { company } from "../content/siteData";
 import { useI18n } from "../i18n";
 
 export default function Footer() {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
+  const richman = {
+    ru: {
+      eyebrow: "Digital production",
+      title: "Сайт спроектирован и разработан RICHMAN STUDIO",
+      text: "Корпоративный интерфейс, контентная архитектура и CMS-подготовка для современной digital-презентации компании.",
+      learn: "Ознакомиться",
+      order: "Заказать сайт",
+    },
+    en: {
+      eyebrow: "Digital production",
+      title: "Designed and developed by RICHMAN STUDIO",
+      text: "Corporate interface, content architecture and CMS-ready foundation for a modern digital company presentation.",
+      learn: "Learn more",
+      order: "Order a website",
+    },
+    zh: {
+      eyebrow: "Digital production",
+      title: "网站由 RICHMAN STUDIO 设计与开发",
+      text: "企业界面、内容架构和 CMS 基础，为公司打造现代化数字展示。",
+      learn: "了解更多",
+      order: "订购网站",
+    },
+  }[lang];
 
   return (
     <footer className="bg-slate-950 text-white">
+      <div className="border-b border-white/10 bg-[#07111f]">
+        <div className="site-container py-10">
+          <section className="relative overflow-hidden border border-white/10 bg-slate-900 p-6 shadow-2xl md:p-8">
+            <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_70%_30%,rgba(11,79,163,0.38),transparent_42%),linear-gradient(135deg,rgba(215,25,32,0.22),transparent_45%)]" />
+            <div className="relative grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center">
+              <div>
+                <div className="mb-4 inline-flex items-center gap-3 text-xs font-extrabold uppercase tracking-[0.18em] text-[#93c5fd]">
+                  <Sparkles className="h-4 w-4" />
+                  {richman.eyebrow}
+                </div>
+                <h2 className="max-w-3xl text-3xl font-extrabold leading-tight md:text-5xl">
+                  {richman.title}
+                </h2>
+                <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
+                  {richman.text}
+                </p>
+              </div>
+              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
+                <a
+                  href="https://richmanstudio.github.io/richmanstudio"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-3 bg-[#0b4fa3] px-6 py-4 text-sm font-extrabold text-white transition hover:bg-[#083d7d]"
+                >
+                  {richman.learn}
+                  <ArrowRight className="h-4 w-4" />
+                </a>
+                <a
+                  href="tel:+79144092454"
+                  className="inline-flex items-center justify-center gap-3 border border-white/25 bg-white/10 px-6 py-4 text-sm font-extrabold text-white transition hover:border-white/60 hover:bg-white/15"
+                >
+                  {richman.order}
+                  <Phone className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
       <div className="site-container grid gap-10 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <div className="mb-4 text-2xl font-extrabold">{t.company.name}</div>

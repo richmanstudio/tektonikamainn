@@ -4,6 +4,7 @@ import { type ReactNode, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import PrivacyNotice from "../components/PrivacyNotice";
 import { useI18n } from "../i18n";
 
 type Props = {
@@ -61,6 +62,7 @@ export default function MainLayout({ children }: Props) {
           </motion.button>
         )}
       </AnimatePresence>
+      <PrivacyNotice />
     </>
   );
 }
