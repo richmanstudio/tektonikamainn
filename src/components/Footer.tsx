@@ -86,7 +86,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 bg-[#050b16]">
+      <div className="border-t border-white/10 bg-slate-950">
         <div className="site-container py-5">
           <section className="relative overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.035] px-5 py-4 shadow-lg shadow-black/20">
             <div className="absolute inset-y-0 right-0 w-1/3 bg-[radial-gradient(circle_at_80%_50%,rgba(11,79,163,0.32),transparent_48%)]" />
