@@ -1,4 +1,4 @@
-import { ArrowRight, Mail, MapPin, Phone, Sparkles } from "lucide-react";
+import { ArrowUpRight, Mail, MapPin, Phone, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
 import { company } from "../content/siteData";
 import { useI18n } from "../i18n";
@@ -31,46 +31,6 @@ export default function Footer() {
 
   return (
     <footer className="bg-slate-950 text-white">
-      <div className="border-b border-white/10 bg-[#07111f]">
-        <div className="site-container py-10">
-          <section className="relative overflow-hidden border border-white/10 bg-slate-900 p-6 shadow-2xl md:p-8">
-            <div className="absolute inset-y-0 right-0 w-1/2 bg-[radial-gradient(circle_at_70%_30%,rgba(11,79,163,0.38),transparent_42%),linear-gradient(135deg,rgba(215,25,32,0.22),transparent_45%)]" />
-            <div className="relative grid gap-7 lg:grid-cols-[1fr_auto] lg:items-center">
-              <div>
-                <div className="mb-4 inline-flex items-center gap-3 text-xs font-extrabold uppercase tracking-[0.18em] text-[#93c5fd]">
-                  <Sparkles className="h-4 w-4" />
-                  {richman.eyebrow}
-                </div>
-                <h2 className="max-w-3xl text-3xl font-extrabold leading-tight md:text-5xl">
-                  {richman.title}
-                </h2>
-                <p className="mt-4 max-w-2xl text-sm leading-6 text-slate-300">
-                  {richman.text}
-                </p>
-              </div>
-              <div className="flex flex-col gap-3 sm:flex-row lg:flex-col">
-                <a
-                  href="https://richmanstudio.github.io/richmanstudio"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-3 bg-[#0b4fa3] px-6 py-4 text-sm font-extrabold text-white transition hover:bg-[#083d7d]"
-                >
-                  {richman.learn}
-                  <ArrowRight className="h-4 w-4" />
-                </a>
-                <a
-                  href="tel:+79144092454"
-                  className="inline-flex items-center justify-center gap-3 border border-white/25 bg-white/10 px-6 py-4 text-sm font-extrabold text-white transition hover:border-white/60 hover:bg-white/15"
-                >
-                  {richman.order}
-                  <Phone className="h-4 w-4" />
-                </a>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-
       <div className="site-container grid gap-10 py-12 md:grid-cols-[1.4fr_1fr_1fr]">
         <div>
           <div className="mb-4 text-2xl font-extrabold">{t.company.name}</div>
@@ -123,6 +83,44 @@ export default function Footer() {
             <Link to="/privacy" className="hover:text-white">{t.footer.privacy}</Link>
             <Link to="/agreement" className="hover:text-white">{t.footer.agreement}</Link>
           </div>
+        </div>
+      </div>
+
+      <div className="border-t border-white/10 bg-[#050b16]">
+        <div className="site-container py-5">
+          <section className="relative overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.035] px-5 py-4 shadow-lg shadow-black/20">
+            <div className="absolute inset-y-0 right-0 w-1/3 bg-[radial-gradient(circle_at_80%_50%,rgba(11,79,163,0.32),transparent_48%)]" />
+            <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex items-start gap-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#0b4fa3] text-white">
+                  <Sparkles className="h-5 w-5" />
+                </span>
+                <div>
+                  <div className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#93c5fd]">{richman.eyebrow}</div>
+                  <h2 className="mt-1 text-lg font-extrabold leading-snug text-white md:text-xl">{richman.title}</h2>
+                  <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-400 md:text-sm">{richman.text}</p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <a
+                  href="https://richmanstudio.github.io/richmanstudio"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#0b4fa3] px-5 py-3 text-xs font-extrabold text-white transition hover:bg-[#083d7d]"
+                >
+                  {richman.learn}
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+                <a
+                  href="tel:+79144092454"
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/8 px-5 py-3 text-xs font-extrabold text-white transition hover:border-white/40 hover:bg-white/12"
+                >
+                  {richman.order}
+                  <Phone className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </footer>
