@@ -1,4 +1,4 @@
-import { ArrowUpRight, Mail, MapPin, Phone, Sparkles } from "lucide-react";
+import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { company } from "../content/siteData";
 import { useI18n } from "../i18n";
@@ -9,21 +9,18 @@ export default function Footer() {
     ru: {
       eyebrow: "Digital production",
       title: "Сайт спроектирован и разработан RICHMAN STUDIO",
-      text: "Корпоративный интерфейс, контентная архитектура и CMS-подготовка для современной digital-презентации компании.",
       learn: "Ознакомиться",
       order: "Заказать сайт",
     },
     en: {
       eyebrow: "Digital production",
       title: "Designed and developed by RICHMAN STUDIO",
-      text: "Corporate interface, content architecture and CMS-ready foundation for a modern digital company presentation.",
       learn: "Learn more",
       order: "Order a website",
     },
     zh: {
       eyebrow: "Digital production",
       title: "网站由 RICHMAN STUDIO 设计与开发",
-      text: "企业界面、内容架构和 CMS 基础，为公司打造现代化数字展示。",
       learn: "了解更多",
       order: "订购网站",
     },
@@ -91,15 +88,9 @@ export default function Footer() {
           <section className="relative overflow-hidden rounded-[22px] border border-white/10 bg-white/[0.035] px-5 py-4 shadow-lg shadow-black/20">
             <div className="absolute inset-y-0 right-0 w-1/3 bg-[radial-gradient(circle_at_80%_50%,rgba(11,79,163,0.32),transparent_48%)]" />
             <div className="relative flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-              <div className="flex items-start gap-4">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#0b4fa3] text-white">
-                  <Sparkles className="h-5 w-5" />
-                </span>
-                <div>
-                  <div className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#93c5fd]">{richman.eyebrow}</div>
-                  <h2 className="mt-1 text-lg font-extrabold leading-snug text-white md:text-xl">{richman.title}</h2>
-                  <p className="mt-1 max-w-3xl text-xs leading-5 text-slate-400 md:text-sm">{richman.text}</p>
-                </div>
+              <div>
+                <div className="text-[11px] font-extrabold uppercase tracking-[0.18em] text-[#93c5fd]">{richman.eyebrow}</div>
+                <h2 className="mt-1 text-lg font-extrabold leading-snug text-white md:text-xl">{richman.title}</h2>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
                 <a
