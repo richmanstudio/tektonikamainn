@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ExternalLink, FileCheck2, ShieldCheck } from "lucide-react";
+import { ExternalLink, ShieldCheck } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useI18n } from "../i18n";
 
@@ -97,7 +97,7 @@ export default function PrivacyNotice() {
     <AnimatePresence>
       {visible && (
         <motion.div
-          className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/82 px-4 py-6 backdrop-blur-md"
+          className="fixed inset-0 z-[120] flex items-end bg-slate-950/72 backdrop-blur-md"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
@@ -106,76 +106,73 @@ export default function PrivacyNotice() {
           aria-labelledby="privacy-notice-title"
         >
           <motion.section
-            initial={{ opacity: 0, y: 22, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 18, scale: 0.98 }}
-            transition={{ duration: 0.22, ease: "easeOut" }}
-            className="max-h-[92vh] w-full max-w-6xl overflow-y-auto bg-white text-slate-950 shadow-2xl"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            exit={{ y: "100%" }}
+            transition={{ duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+            className="w-full rounded-t-[28px] border-t border-white/20 bg-white text-slate-950 shadow-2xl"
           >
-            <div className="grid min-h-[640px] lg:grid-cols-[380px_1fr]">
-              <div className="relative overflow-hidden bg-slate-950 p-8 text-white md:p-10">
-                <div className="absolute inset-x-0 bottom-0 h-64 bg-[radial-gradient(circle_at_20%_80%,rgba(11,79,163,0.55),transparent_48%),linear-gradient(135deg,rgba(33,140,84,0.22),transparent_46%)]" />
-                <div className="relative">
-                  <div className="mb-10 flex h-16 w-16 items-center justify-center bg-[#0b4fa3] shadow-lg shadow-[#0b4fa3]/30">
-                    <ShieldCheck className="h-8 w-8" />
+            <div className="site-container py-6 md:py-8">
+              <div className="grid gap-6 xl:grid-cols-[1fr_360px] xl:items-end">
+                <div>
+                  <div className="mb-5 flex items-start gap-5">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#0b4fa3] text-white shadow-lg shadow-[#0b4fa3]/25">
+                      <ShieldCheck className="h-7 w-7" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-extrabold uppercase tracking-[0.18em] text-[#0b4fa3]">ООО «ТЕКТОНИКА»</p>
+                      <h2 id="privacy-notice-title" className="mt-2 text-2xl font-extrabold leading-tight text-slate-950 md:text-3xl">
+                        {text.title}
+                      </h2>
+                      <p className="mt-2 max-w-4xl text-sm font-semibold leading-6 text-slate-700 md:text-base">
+                        {text.lead}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-sm font-bold uppercase tracking-[0.18em] text-[#93c5fd]">ООО «ТЕКТОНИКА»</p>
-                  <h2 id="privacy-notice-title" className="mt-5 max-w-[300px] text-4xl font-extrabold leading-[1.05]">
-                    {text.title}
-                  </h2>
-                  <p className="mt-7 max-w-[280px] text-base leading-7 text-slate-300">{text.note}</p>
-                </div>
-              </div>
 
-              <div className="p-7 md:p-10 lg:p-12">
-                <div className="max-w-3xl">
-                  <p className="text-2xl font-extrabold leading-snug text-slate-950">{text.lead}</p>
-                </div>
+                  <div className="grid gap-4 lg:grid-cols-[1fr_0.9fr]">
+                    <ul className="grid gap-2 text-sm leading-6 text-slate-600 md:grid-cols-2">
+                      {text.items.slice(0, 4).map((item) => (
+                        <li key={item} className="border-l-2 border-[#0b4fa3] pl-3">
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
 
-                <ul className="mt-8 grid gap-3 md:grid-cols-2">
-                  {text.items.map((item) => (
-                    <li key={item} className="flex gap-4 border border-slate-200 bg-white p-4 text-sm leading-6 text-slate-700">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center bg-[#eef5ff] text-[#0b4fa3]">
-                        <FileCheck2 className="h-5 w-5" />
-                      </span>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <div className="mt-8 border border-slate-200 bg-slate-50 p-5 md:p-6">
-                  <div className="mb-4 text-sm font-extrabold uppercase tracking-[0.14em] text-slate-500">
-                    {text.lawIntro}
-                  </div>
-                  <div className="grid gap-3 md:grid-cols-3">
-                    {text.links.map((link) => (
-                      <a
-                        key={link.href}
-                        href={link.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="group flex min-h-20 items-start justify-between gap-4 border border-slate-200 bg-white p-4 text-sm font-bold leading-6 text-[#0b4fa3] transition hover:border-[#0b4fa3]"
-                      >
-                        <span>{link.label}</span>
-                        <ExternalLink className="mt-1 h-4 w-4 shrink-0 opacity-60 transition group-hover:opacity-100" />
-                      </a>
-                    ))}
+                    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="mb-3 text-xs font-extrabold uppercase tracking-[0.14em] text-slate-500">
+                        {text.lawIntro}
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {text.links.map((link) => (
+                          <a
+                            key={link.href}
+                            href={link.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-bold leading-5 text-[#0b4fa3] transition hover:border-[#0b4fa3]"
+                          >
+                            <span>{link.label}</span>
+                            <ExternalLink className="h-3.5 w-3.5 shrink-0 opacity-70" />
+                          </a>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="mt-8 border-t border-slate-200 pt-6">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <button type="button" onClick={() => close("reviewed")} className="btn-primary min-h-14">
-                      {text.accept}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => close("not-reviewed")}
-                      className="inline-flex min-h-14 items-center justify-center border border-slate-300 bg-white px-7 py-4 text-sm font-bold text-slate-950 transition hover:border-[#d71920] hover:text-[#d71920]"
-                    >
-                      {text.decline}
-                    </button>
-                  </div>
+                <div className="grid gap-3 rounded-3xl border border-slate-200 bg-white p-4 shadow-xl shadow-slate-950/10">
+                  <p className="text-sm font-semibold leading-6 text-slate-600">{text.note}</p>
+                  <button type="button" onClick={() => close("reviewed")} className="btn-primary min-h-[52px] rounded-2xl">
+                    {text.accept}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => close("not-reviewed")}
+                    className="inline-flex min-h-[52px] items-center justify-center rounded-2xl border border-slate-300 bg-white px-7 py-4 text-sm font-bold text-slate-950 transition hover:border-[#d71920] hover:text-[#d71920]"
+                  >
+                    {text.decline}
+                  </button>
                 </div>
               </div>
             </div>
