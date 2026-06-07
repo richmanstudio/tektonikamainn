@@ -87,7 +87,7 @@ export default function Header() {
   return (
     <header
       onMouseLeave={() => setMegaOpen(false)}
-      className={`fixed inset-x-0 top-0 z-50 transition ${
+      className={`fixed inset-x-0 top-0 z-[90] transition ${
         transparent ? "bg-transparent" : "border-b border-slate-200 bg-[#f2f2f2] shadow-sm"
       }`}
     >
