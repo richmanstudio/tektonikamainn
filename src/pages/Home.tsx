@@ -1,6 +1,7 @@
 import { Activity, ArrowRight, ChevronRight, Database, FlaskConical, MapPin, Mountain, Plane, Zap } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import ProjectsGeoMap from "../components/ProjectsGeoMap";
 import dronePrepImg from "../assets/presentation/image14.jpeg";
 import modelImg from "../assets/presentation/image15.jpg";
 import uavImg from "../assets/presentation/image6.png";
@@ -17,7 +18,7 @@ const heroImages = [heroFieldImg, heroDroneImg, heroTopoImg];
 const serviceIcons = [Mountain, Activity, Zap, Plane, Database, FlaskConical];
 
 export default function Home() {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   const cms = useCmsContent();
   const [activeSlide, setActiveSlide] = useState(0);
   const featuredProjects = useMemo(() => cms.projectsGroups.flatMap((group: any) => group.projects).slice(0, 3), [cms.projectsGroups]);
@@ -188,6 +189,7 @@ export default function Home() {
               {t.nav[2].label} <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
+          <ProjectsGeoMap groups={cms.projectsGroups} lang={lang} />
           <div className="grid gap-4 lg:grid-cols-3">
             {featuredProjects.map((project) => (
               <article key={project.title} className="min-h-[315px] bg-white p-8">
