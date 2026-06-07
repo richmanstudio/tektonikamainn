@@ -2,6 +2,7 @@ import { ArrowRight, BriefcaseBusiness, Building2, MapPin } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Lang } from "../i18n";
+import { RUSSIA_URAL_FAR_EAST_PATH } from "./russiaMapPath";
 
 type ProjectGroup = {
   type: string;
@@ -22,25 +23,47 @@ type MapPoint = Project & {
   category: "company" | "team";
   x: number;
   y: number;
+  lon: number;
+  lat: number;
   area: string;
 };
 
-const pointPositions: Record<string, Pick<MapPoint, "x" | "y" | "area">> = {
-  "Участки Амхалга и Немту-Си": { x: 78, y: 50, area: "Амхалга / Немту-Си" },
-  "Люгинская площадь": { x: 80, y: 58, area: "Люгинская площадь" },
-  "Участок Осенний": { x: 88, y: 72, area: "Приморье" },
-  "Чульбатканская площадь": { x: 73, y: 46, area: "Чульбаткан" },
-  "Месторождение Сухой Лог": { x: 35, y: 61, area: "Сухой Лог" },
-  "Фланги месторождения «Северное»": { x: 66, y: 39, area: "Южная Якутия" },
-  "Нижний Биркачан": { x: 75, y: 29, area: "Колыма" },
+const geoBounds = {
+  lonMin: 55,
+  lonMax: 180,
+  latMin: 42,
+  latMax: 76,
+  width: 1000,
+  height: 550,
+  padding: 34,
+};
+
+const pointGeoPositions: Record<string, Pick<MapPoint, "lon" | "lat" | "area">> = {
+  "Участки Амхалга и Немту-Си": { lon: 136.4, lat: 52.9, area: "Амхалга / Немту-Си" },
+  "Люгинская площадь": { lon: 135.9, lat: 51.6, area: "Люгинская площадь" },
+  "Участок Осенний": { lon: 134.2, lat: 44.9, area: "Приморье" },
+  "Чульбатканская площадь": { lon: 135.3, lat: 54.7, area: "Чульбаткан" },
+  "Месторождение Сухой Лог": { lon: 118.8, lat: 58.6, area: "Сухой Лог" },
+  "Фланги месторождения «Северное»": { lon: 125.6, lat: 58.4, area: "Южная Якутия" },
+  "Нижний Биркачан": { lon: 151.1, lat: 62.5, area: "Колыма" },
 };
 
 const fallbackPositions = [
-  { x: 78, y: 52, area: "Дальний Восток" },
-  { x: 84, y: 61, area: "Хабаровский край" },
-  { x: 88, y: 72, area: "Приморье" },
-  { x: 62, y: 42, area: "Якутия" },
-  { x: 35, y: 60, area: "Восточная Сибирь" },
+  { lon: 136.8, lat: 51.8, area: "Дальний Восток" },
+  { lon: 135.1, lat: 48.5, area: "Хабаровский край" },
+  { lon: 132.0, lat: 44.8, area: "Приморье" },
+  { lon: 129.7, lat: 62.0, area: "Якутия" },
+  { lon: 118.0, lat: 58.0, area: "Восточная Сибирь" },
+];
+
+const areaLabelPositions = [
+  { lon: 60, lat: 56, offsetX: 0, offsetY: 0 },
+  { lon: 73, lat: 58, offsetX: 0, offsetY: 0 },
+  { lon: 94, lat: 58, offsetX: 0, offsetY: 0 },
+  { lon: 128, lat: 62, offsetX: 0, offsetY: 0 },
+  { lon: 151, lat: 62, offsetX: 0, offsetY: 0 },
+  { lon: 135, lat: 49, offsetX: 0, offsetY: 0 },
+  { lon: 132, lat: 44, offsetX: 0, offsetY: 0 },
 ];
 
 const copy = {
@@ -58,6 +81,7 @@ const copy = {
     mapLabel: "Работы и проектный опыт",
     details: "Открыть проекты",
     hint: "Наведите на точку или нажмите на нее",
+    source: "Картографическая основа: Natural Earth 110m. Координаты точек можно уточнить в CMS.",
     areas: ["Урал", "Западная Сибирь", "Красноярский край", "Якутия", "Магадан", "Хабаровск", "Приморье"],
   },
   en: {
@@ -74,6 +98,7 @@ const copy = {
     mapLabel: "Works and project experience",
     details: "Open projects",
     hint: "Hover or tap a point",
+    source: "Base map: Natural Earth 110m. Point coordinates can be refined in the CMS.",
     areas: ["Urals", "West Siberia", "Krasnoyarsk Krai", "Yakutia", "Magadan", "Khabarovsk", "Primorye"],
   },
   zh: {
@@ -90,6 +115,7 @@ const copy = {
     mapLabel: "工作与项目经验",
     details: "打开项目",
     hint: "悬停或点击点位",
+    source: "底图：Natural Earth 110m。点位坐标可在 CMS 中调整。",
     areas: ["乌拉尔", "西西伯利亚", "克拉斯诺亚尔斯克", "雅库特", "马加丹", "哈巴罗夫斯克", "滨海"],
   },
 };
@@ -99,15 +125,34 @@ function normalizeCategory(group: string): MapPoint["category"] {
   return value.includes("сотруд") || value.includes("team") || value.includes("团队") ? "team" : "company";
 }
 
+function mercator(lat: number) {
+  const rad = (lat * Math.PI) / 180;
+  return Math.log(Math.tan(Math.PI / 4 + rad / 2));
+}
+
+function projectGeoPoint(lon: number, lat: number) {
+  const { lonMin, lonMax, latMin, latMax, width, height, padding } = geoBounds;
+  const x = padding + ((lon - lonMin) / (lonMax - lonMin)) * (width - padding * 2);
+  const north = mercator(latMax);
+  const south = mercator(latMin);
+  const y = padding + ((north - mercator(lat)) / (north - south)) * (height - padding * 2);
+  return {
+    x: Math.max(0, Math.min(100, (x / width) * 100)),
+    y: Math.max(0, Math.min(100, (y / height) * 100)),
+  };
+}
+
 function buildMapPoints(groups: ProjectGroup[]) {
   let fallbackIndex = 0;
   return groups.flatMap((group) =>
     group.projects.map((project, index) => {
       const fallback = fallbackPositions[fallbackIndex++ % fallbackPositions.length];
-      const position = pointPositions[project.title] || fallback;
+      const position = pointGeoPositions[project.title] || fallback;
+      const screenPosition = projectGeoPoint(position.lon, position.lat);
       return {
         ...project,
         ...position,
+        ...screenPosition,
         id: `${group.type}-${project.title}-${index}`,
         group: group.type,
         category: normalizeCategory(group.type),
@@ -196,37 +241,32 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
             <svg viewBox="0 0 1000 550" role="img" aria-label={dict.mapLabel} className="absolute inset-0 h-full w-full">
               <defs>
                 <linearGradient id="land" x1="0" x2="1" y1="0" y2="1">
-                  <stop offset="0%" stopColor="#dbe6df" />
-                  <stop offset="52%" stopColor="#c4d7d4" />
-                  <stop offset="100%" stopColor="#aebfbb" />
-                </linearGradient>
-                <linearGradient id="range" x1="0" x2="1">
-                  <stop offset="0%" stopColor="#728782" />
-                  <stop offset="100%" stopColor="#46605d" />
+                  <stop offset="0%" stopColor="#dfe9e5" />
+                  <stop offset="52%" stopColor="#c9d8d4" />
+                  <stop offset="100%" stopColor="#aebfba" />
                 </linearGradient>
               </defs>
-              <path d="M34 350 C92 281 169 283 240 252 C322 219 393 168 508 198 C599 221 619 145 721 151 C817 158 858 224 959 202 L973 373 C862 394 814 462 698 424 C590 388 504 455 392 416 C289 380 187 437 84 409 Z" fill="url(#land)" stroke="#8ea19c" strokeWidth="3" />
-              <path d="M54 366 C167 338 232 301 340 318 C477 340 528 280 640 294 C743 307 822 272 956 292" fill="none" stroke="#ffffff" strokeOpacity="0.65" strokeWidth="12" />
-              <path d="M60 366 C170 338 232 301 340 318 C477 340 528 280 640 294 C743 307 822 272 956 292" fill="none" stroke="#8fb0ba" strokeWidth="3" strokeDasharray="8 13" />
-              <path d="M96 328 C132 278 161 250 201 227 M292 283 C318 239 340 220 377 199 M548 233 C601 189 638 177 692 174 M742 217 C790 195 838 194 891 211" fill="none" stroke="url(#range)" strokeWidth="10" strokeLinecap="round" strokeOpacity="0.38" />
-              <path d="M655 102 C692 129 717 168 729 210 C737 239 730 269 703 286 C675 303 637 292 616 267 C593 239 587 201 599 168 C609 137 627 116 655 102 Z" fill="#b8cac6" stroke="#879c97" strokeWidth="2" opacity="0.78" />
-              <path d="M756 82 C795 104 814 137 810 174 C806 214 769 240 731 232 C692 224 678 178 696 143 C710 116 727 96 756 82 Z" fill="#c1d0cb" stroke="#879c97" strokeWidth="2" opacity="0.78" />
-              <path d="M830 236 C878 238 920 253 958 286" fill="none" stroke="#8fb0ba" strokeWidth="5" strokeLinecap="round" strokeDasharray="9 11" />
-              <path d="M104 420 C233 463 381 477 514 450 C648 424 764 448 917 405" fill="none" stroke="#77908b" strokeOpacity="0.45" strokeWidth="2" />
+              {[60, 80, 100, 120, 140, 160, 180].map((lon) => {
+                const x = projectGeoPoint(lon, geoBounds.latMin).x * 10;
+                return <path key={`lon-${lon}`} d={`M ${x} 0 L ${x} 550`} stroke="#90a4ae" strokeOpacity="0.28" strokeWidth="1" />;
+              })}
+              {[45, 50, 55, 60, 65, 70, 75].map((lat) => {
+                const y = projectGeoPoint(geoBounds.lonMin, lat).y * 5.5;
+                return <path key={`lat-${lat}`} d={`M 0 ${y} L 1000 ${y}`} stroke="#90a4ae" strokeOpacity="0.22" strokeWidth="1" />;
+              })}
+              <path d={RUSSIA_URAL_FAR_EAST_PATH} fill="url(#land)" stroke="#708984" strokeWidth="2.4" />
+              <path d={RUSSIA_URAL_FAR_EAST_PATH} fill="none" stroke="#ffffff" strokeOpacity="0.45" strokeWidth="0.8" />
             </svg>
 
             {dict.areas.map((area, index) => {
-              const positions = [
-                { left: "9%", top: "67%" },
-                { left: "20%", top: "55%" },
-                { left: "34%", top: "65%" },
-                { left: "60%", top: "29%" },
-                { left: "73%", top: "18%" },
-                { left: "79%", top: "62%" },
-                { left: "87%", top: "79%" },
-              ];
+              const position = areaLabelPositions[index] || areaLabelPositions[0];
+              const label = projectGeoPoint(position.lon, position.lat);
               return (
-                <span key={area} className="absolute text-[11px] font-extrabold uppercase text-slate-500/75" style={positions[index]}>
+                <span
+                  key={area}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 text-[11px] font-extrabold uppercase text-slate-500/75"
+                  style={{ left: `${label.x}%`, top: `${label.y}%` }}
+                >
                   {area}
                 </span>
               );
@@ -269,7 +309,10 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
           </div>
 
           <div className="relative mt-5 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
-            <p className="text-sm font-semibold text-slate-600">{dict.hint}</p>
+            <div>
+              <p className="text-sm font-semibold text-slate-600">{dict.hint}</p>
+              <p className="mt-2 text-xs font-semibold text-slate-500">{dict.source}</p>
+            </div>
             <Link to="/projects" className="btn-secondary bg-white/80">
               {dict.details} <ArrowRight className="h-5 w-5" />
             </Link>
