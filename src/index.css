@@ -109,3 +109,47 @@ select {
     @apply inline-flex items-center gap-3 text-sm font-bold text-[#0b4fa3] transition hover:text-[#d71920];
   }
 }
+
+.leaflet-container {
+  font-family: inherit;
+  background: #071421;
+}
+
+.leaflet-control-attribution {
+  border-top-left-radius: 0;
+  background: rgba(255, 255, 255, 0.86) !important;
+  color: #334155 !important;
+  font-size: 10px !important;
+  font-weight: 700;
+}
+
+.leaflet-control-zoom {
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.26) !important;
+}
+
+.leaflet-control-zoom a {
+  border-radius: 0 !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  color: #fff !important;
+  border-bottom-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+.leaflet-control-zoom a:hover {
+  background: #0b4fa3 !important;
+}
+
+.tektonika-map-tooltip {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: rgba(15, 23, 42, 0.94) !important;
+  color: #fff !important;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28) !important;
+  font: inherit !important;
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+
+.tektonika-map-tooltip::before {
+  border-top-color: rgba(15, 23, 42, 0.94) !important;
+}
