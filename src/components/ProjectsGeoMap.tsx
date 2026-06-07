@@ -1,4 +1,4 @@
-import { ArrowRight, BriefcaseBusiness, Building2, MapPin } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, Building2, Crosshair, MapPinned } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import type { Lang } from "../i18n";
@@ -176,14 +176,17 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
   };
 
   return (
-    <div className="mb-16 overflow-hidden border border-slate-200 bg-white shadow-[0_24px_70px_rgba(15,23,42,0.10)]">
-      <div className="grid lg:grid-cols-[0.72fr_1.28fr]">
-        <aside className="bg-slate-950 p-6 text-white sm:p-8 lg:p-10">
-          <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-[#7cc7ff]">{dict.eyebrow}</p>
-          <h3 className="mt-5 text-3xl font-extrabold leading-tight sm:text-4xl">{dict.title}</h3>
-          <p className="mt-6 text-base leading-7 text-white/72">{dict.text}</p>
+    <div className="mb-16 overflow-hidden border border-slate-800 bg-slate-950 shadow-[0_28px_90px_rgba(15,23,42,0.22)]">
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(11,79,163,0.35),transparent_26%),radial-gradient(circle_at_92%_28%,rgba(215,25,32,0.13),transparent_23%)]" />
+        <div className="relative grid gap-7 border-b border-white/10 p-6 text-white sm:p-8 lg:grid-cols-[1fr_auto] lg:p-10">
+          <div className="max-w-3xl">
+            <p className="text-xs font-extrabold uppercase tracking-[0.24em] text-[#7cc7ff]">{dict.eyebrow}</p>
+            <h3 className="mt-4 text-3xl font-extrabold leading-tight sm:text-4xl lg:text-5xl">{dict.title}</h3>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-white/70">{dict.text}</p>
+          </div>
 
-          <div className="mt-8 grid gap-2">
+          <div className="grid gap-2 sm:grid-cols-3 lg:min-w-[520px] lg:self-end">
             {[
               { value: "all" as const, label: dict.all },
               { value: "company" as const, label: dict.company },
@@ -195,8 +198,8 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
                 onClick={() => setFiltered(item.value)}
                 className={`flex min-h-12 items-center justify-between border px-4 text-left text-sm font-bold transition ${
                   filter === item.value
-                    ? "border-[#7cc7ff] bg-[#0b4fa3] text-white"
-                    : "border-white/15 bg-white/5 text-white/75 hover:border-white/40 hover:text-white"
+                    ? "border-[#7cc7ff] bg-[#0b4fa3] text-white shadow-[0_16px_38px_rgba(11,79,163,0.35)]"
+                    : "border-white/15 bg-white/[0.04] text-white/72 hover:border-white/35 hover:bg-white/[0.08] hover:text-white"
                 }`}
               >
                 {item.label}
@@ -204,58 +207,46 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
               </button>
             ))}
           </div>
+        </div>
 
-          {activePoint && (
-            <article className="mt-8 border border-white/15 bg-white/[0.06] p-5">
-              <div className="mb-4 flex items-center gap-3 text-xs font-extrabold uppercase text-[#7cc7ff]">
-                {activePoint.category === "company" ? <Building2 className="h-4 w-4" /> : <BriefcaseBusiness className="h-4 w-4" />}
-                {dict.selected}
+        <div className="relative grid gap-0 lg:grid-cols-[minmax(0,1fr)_390px]">
+          <div className="relative min-h-[480px] overflow-hidden bg-[#071421] p-4 sm:p-6 lg:p-8">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_78%_28%,rgba(124,199,255,0.16),transparent_28%),linear-gradient(135deg,rgba(9,19,32,0.96),rgba(14,35,48,0.92))]" />
+            <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(124,199,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(124,199,255,0.10)_1px,transparent_1px)] [background-size:54px_54px]" />
+
+            <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-[0.24em] text-[#7cc7ff]">{dict.route}</p>
+                <h4 className="mt-2 text-2xl font-extrabold text-white">{dict.mapLabel}</h4>
               </div>
-              <h4 className="text-2xl font-extrabold leading-tight">{activePoint.title}</h4>
-              <p className="mt-3 text-sm font-bold text-white/70">{activePoint.client}</p>
-              <p className="mt-4 text-sm leading-6 text-white/68">{activePoint.scope}</p>
-              <div className="mt-5 flex flex-wrap gap-2 text-xs font-bold">
-                <span className="bg-white/10 px-3 py-2">{activePoint.region}</span>
-                <span className="bg-white/10 px-3 py-2">{activePoint.year}</span>
+              <div className="flex flex-wrap gap-3 text-xs font-bold text-white/75">
+                <span className="inline-flex items-center gap-2"><span className="h-3 w-3 bg-[#2f8cff]" />{dict.legendCompany}</span>
+                <span className="inline-flex items-center gap-2"><span className="h-3 w-3 bg-[#d71920]" />{dict.legendTeam}</span>
               </div>
-            </article>
-          )}
-        </aside>
-
-        <div className="relative min-h-[520px] overflow-hidden bg-[#edf4f7] p-4 sm:p-6 lg:p-8">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_72%_34%,rgba(11,79,163,0.18),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.86),rgba(207,222,229,0.72))]" />
-          <div className="absolute inset-0 opacity-45 [background-image:linear-gradient(rgba(15,23,42,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(15,23,42,0.06)_1px,transparent_1px)] [background-size:42px_42px]" />
-
-          <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <p className="text-xs font-extrabold uppercase tracking-[0.22em] text-slate-500">{dict.route}</p>
-              <h4 className="mt-2 text-2xl font-extrabold text-slate-950">{dict.mapLabel}</h4>
             </div>
-            <div className="flex flex-wrap gap-3 text-xs font-bold text-slate-700">
-              <span className="inline-flex items-center gap-2"><span className="h-3 w-3 bg-[#0b4fa3]" />{dict.legendCompany}</span>
-              <span className="inline-flex items-center gap-2"><span className="h-3 w-3 bg-[#d71920]" />{dict.legendTeam}</span>
-            </div>
-          </div>
 
-          <div className="relative mt-6 aspect-[1.82/1] min-h-[280px] overflow-hidden border border-slate-300/80 bg-white/40">
-            <svg viewBox="0 0 1000 550" role="img" aria-label={dict.mapLabel} className="absolute inset-0 h-full w-full">
+            <div className="relative mt-6 aspect-[2.05/1] min-h-[270px] overflow-hidden border border-white/10 bg-slate-950/45 shadow-inner">
+              <svg viewBox="0 10 1000 510" role="img" aria-label={dict.mapLabel} className="absolute inset-0 h-full w-full">
               <defs>
                 <linearGradient id="land" x1="0" x2="1" y1="0" y2="1">
-                  <stop offset="0%" stopColor="#dfe9e5" />
-                  <stop offset="52%" stopColor="#c9d8d4" />
-                  <stop offset="100%" stopColor="#aebfba" />
+                  <stop offset="0%" stopColor="#29444a" />
+                  <stop offset="52%" stopColor="#223c40" />
+                  <stop offset="100%" stopColor="#183038" />
                 </linearGradient>
+                <filter id="mapShadow" x="-10%" y="-10%" width="120%" height="120%">
+                  <feDropShadow dx="0" dy="18" stdDeviation="18" floodColor="#000000" floodOpacity="0.28" />
+                </filter>
               </defs>
               {[60, 80, 100, 120, 140, 160, 180].map((lon) => {
                 const x = projectGeoPoint(lon, geoBounds.latMin).x * 10;
-                return <path key={`lon-${lon}`} d={`M ${x} 0 L ${x} 550`} stroke="#90a4ae" strokeOpacity="0.28" strokeWidth="1" />;
+                return <path key={`lon-${lon}`} d={`M ${x} 0 L ${x} 550`} stroke="#7cc7ff" strokeOpacity="0.13" strokeWidth="1" />;
               })}
               {[45, 50, 55, 60, 65, 70, 75].map((lat) => {
                 const y = projectGeoPoint(geoBounds.lonMin, lat).y * 5.5;
-                return <path key={`lat-${lat}`} d={`M 0 ${y} L 1000 ${y}`} stroke="#90a4ae" strokeOpacity="0.22" strokeWidth="1" />;
+                return <path key={`lat-${lat}`} d={`M 0 ${y} L 1000 ${y}`} stroke="#7cc7ff" strokeOpacity="0.11" strokeWidth="1" />;
               })}
-              <path d={RUSSIA_URAL_FAR_EAST_PATH} fill="url(#land)" stroke="#708984" strokeWidth="2.4" />
-              <path d={RUSSIA_URAL_FAR_EAST_PATH} fill="none" stroke="#ffffff" strokeOpacity="0.45" strokeWidth="0.8" />
+              <path d={RUSSIA_URAL_FAR_EAST_PATH} fill="url(#land)" stroke="#86aaa5" strokeWidth="2.1" filter="url(#mapShadow)" />
+              <path d={RUSSIA_URAL_FAR_EAST_PATH} fill="none" stroke="#d5fff4" strokeOpacity="0.24" strokeWidth="0.8" />
             </svg>
 
             {dict.areas.map((area, index) => {
@@ -264,7 +255,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
               return (
                 <span
                   key={area}
-                  className="absolute -translate-x-1/2 -translate-y-1/2 text-[11px] font-extrabold uppercase text-slate-500/75"
+                  className="absolute hidden -translate-x-1/2 -translate-y-1/2 text-[10px] font-extrabold uppercase tracking-[0.08em] text-[#a7c0c5]/65 sm:block"
                   style={{ left: `${label.x}%`, top: `${label.y}%` }}
                 >
                   {area}
@@ -274,7 +265,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
 
             {visiblePoints.map((point) => {
               const isActive = point.id === activePoint?.id;
-              const color = point.category === "company" ? "bg-[#0b4fa3]" : "bg-[#d71920]";
+              const color = point.category === "company" ? "bg-[#2f8cff]" : "bg-[#d71920]";
               return (
                 <button
                   key={point.id}
@@ -282,41 +273,74 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
                   onMouseEnter={() => setActiveId(point.id)}
                   onFocus={() => setActiveId(point.id)}
                   onClick={() => setActiveId(point.id)}
-                  className={`absolute z-10 flex h-7 w-7 -translate-x-1/2 -translate-y-1/2 items-center justify-center border-2 border-white shadow-[0_12px_26px_rgba(15,23,42,0.28)] transition hover:scale-110 ${color} ${isActive ? "scale-125 ring-4 ring-slate-950/15" : ""}`}
+                  className={`absolute z-10 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white shadow-[0_0_0_8px_rgba(255,255,255,0.08),0_14px_34px_rgba(0,0,0,0.38)] transition hover:scale-125 ${color} ${isActive ? "scale-150 ring-4 ring-white/20" : ""}`}
                   style={{ left: `${point.x}%`, top: `${point.y}%` }}
                   aria-label={`${point.title}, ${point.region}`}
-                >
-                  <MapPin className="h-4 w-4 text-white" />
-                </button>
+                />
               );
             })}
-
-            {activePoint && (
-              <div
-                className="pointer-events-none absolute z-20 hidden w-[270px] border border-slate-200 bg-white p-4 shadow-[0_18px_46px_rgba(15,23,42,0.18)] md:block"
-                style={{
-                  left: `${activePoint.x}%`,
-                  top: `${activePoint.y}%`,
-                  transform: activePoint.x > 62 ? "translate(calc(-100% - 18px), -50%)" : "translate(18px, -50%)",
-                }}
-              >
-                <p className={`mb-3 h-1 w-12 ${activePoint.category === "company" ? "bg-[#0b4fa3]" : "bg-[#d71920]"}`} />
-                <h5 className="text-base font-extrabold leading-tight text-slate-950">{activePoint.title}</h5>
-                <p className="mt-2 text-xs font-bold uppercase text-slate-500">{activePoint.area}</p>
-                <p className="mt-3 line-clamp-3 text-sm leading-6 text-slate-700">{activePoint.scope}</p>
-              </div>
-            )}
           </div>
 
           <div className="relative mt-5 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
-              <p className="text-sm font-semibold text-slate-600">{dict.hint}</p>
-              <p className="mt-2 text-xs font-semibold text-slate-500">{dict.source}</p>
+              <p className="text-sm font-semibold text-white/75">{dict.hint}</p>
+              <p className="mt-2 text-xs font-semibold text-white/45">{dict.source}</p>
             </div>
-            <Link to="/projects" className="btn-secondary bg-white/80">
+            <Link to="/projects" className="inline-flex items-center justify-center gap-3 border border-white/15 bg-white px-7 py-4 text-sm font-bold text-slate-950 transition hover:border-[#7cc7ff] hover:text-[#0b4fa3]">
               {dict.details} <ArrowRight className="h-5 w-5" />
             </Link>
           </div>
+        </div>
+
+          <aside className="relative border-t border-white/10 bg-white p-6 text-slate-950 lg:border-l lg:border-t-0 lg:p-8">
+            {activePoint && (
+              <article>
+                <div className="flex items-center gap-3 text-xs font-extrabold uppercase tracking-[0.14em] text-[#0b4fa3]">
+                  <span className={`flex h-10 w-10 items-center justify-center text-white ${activePoint.category === "company" ? "bg-[#0b4fa3]" : "bg-[#d71920]"}`}>
+                    {activePoint.category === "company" ? <Building2 className="h-5 w-5" /> : <BriefcaseBusiness className="h-5 w-5" />}
+                  </span>
+                  {dict.selected}
+                </div>
+                <h4 className="mt-7 text-3xl font-extrabold leading-tight">{activePoint.title}</h4>
+                <p className="mt-3 text-sm font-extrabold uppercase tracking-[0.08em] text-slate-500">{activePoint.area}</p>
+                <p className="mt-5 text-base font-bold text-[#0b4fa3]">{activePoint.client}</p>
+                <p className="mt-5 text-base leading-7 text-slate-700">{activePoint.scope}</p>
+                <div className="mt-7 grid grid-cols-2 gap-3 text-sm font-bold">
+                  <span className="border border-slate-200 bg-slate-50 px-4 py-3">{activePoint.region}</span>
+                  <span className="border border-slate-200 bg-slate-50 px-4 py-3">{activePoint.year}</span>
+                </div>
+                <div className="mt-7 flex items-center gap-3 border-t border-slate-200 pt-6 text-sm font-bold text-slate-500">
+                  <Crosshair className="h-5 w-5 text-[#0b4fa3]" />
+                  {activePoint.lat.toFixed(1)}°N / {activePoint.lon.toFixed(1)}°E
+                </div>
+              </article>
+            )}
+
+            <div className="mt-8 border-t border-slate-200 pt-6">
+              <div className="mb-4 flex items-center gap-2 text-xs font-extrabold uppercase tracking-[0.16em] text-slate-500">
+                <MapPinned className="h-4 w-4 text-[#0b4fa3]" />
+                {visiblePoints.length} / {points.length}
+              </div>
+              <div className="grid gap-2">
+                {visiblePoints.slice(0, 5).map((point) => (
+                  <button
+                    key={point.id}
+                    type="button"
+                    onClick={() => setActiveId(point.id)}
+                    className={`grid grid-cols-[8px_1fr] gap-3 border px-3 py-3 text-left text-sm transition ${
+                      activePoint?.id === point.id ? "border-[#0b4fa3] bg-[#eef6ff]" : "border-slate-200 hover:border-slate-400"
+                    }`}
+                  >
+                    <span className={`mt-1 h-2 w-2 rounded-full ${point.category === "company" ? "bg-[#0b4fa3]" : "bg-[#d71920]"}`} />
+                    <span>
+                      <span className="block font-extrabold text-slate-950">{point.title}</span>
+                      <span className="mt-1 block text-xs font-bold text-slate-500">{point.region}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </aside>
         </div>
       </div>
     </div>
