@@ -13,8 +13,14 @@ type FormState = {
   message: string;
 };
 
+const emailJsConfig = {
+  serviceId: import.meta.env.VITE_EMAILJS_SERVICE_ID || "service_labg6pe",
+  templateId: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || "template_pf48q3m",
+  publicKey: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || "m4DT1MN15nyCSdWzE",
+};
+
 export default function Contacts() {
-  const { t } = useI18n();
+  const { lang, t } = useI18n();
   const formRef = useRef<HTMLFormElement>(null);
   const [formData, setFormData] = useState<FormState>({ name: "", email: "", subject: "", message: "" });
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
@@ -29,10 +35,13 @@ export default function Contacts() {
     if (!formRef.current) return;
     setStatus("sending");
     try {
-      await emailjs.sendForm("service_labg6pe", "template_pf48q3m", formRef.current, "m4DT1MN15nyCSdWzE");
+      await emailjs.sendForm(emailJsConfig.serviceId, emailJsConfig.templateId, formRef.current, {
+        publicKey: emailJsConfig.publicKey,
+      });
       setFormData({ name: "", email: "", subject: "", message: "" });
       setStatus("success");
-    } catch {
+    } catch (error) {
+      console.error("EmailJS send failed", error);
       setStatus("error");
     }
   };
@@ -82,7 +91,10 @@ export default function Contacts() {
               )}
               {status === "error" && (
                 <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-5 border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
-                  {t.contacts.error}
+                  {t.contacts.error}{" "}
+                  <a href={`mailto:${company.email}?subject=${encodeURIComponent(formData.subject || "Запрос с сайта ООО ТЕКТОНИКА")}`} className="underline underline-offset-4">
+                    {lang === "ru" ? "Написать напрямую" : lang === "zh" ? "直接写邮件" : "Email directly"}
+                  </a>
                 </motion.div>
               )}
             </AnimatePresence>
