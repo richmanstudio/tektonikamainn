@@ -1,51 +1,388 @@
 import Layout from "../layouts/MainLayout";
-import { useI18n } from "../i18n";
+import { useI18n, type Lang } from "../i18n";
 
-const sections = {
-  ru: [
-    ["1. Предмет соглашения", "Сайт предоставляет пользователю информационные материалы о компании, услугах, проектах, вакансиях и контактах."],
-    ["2. Использование сайта", "Пользователь обязуется использовать сайт законно, не нарушать работу интерфейса и не отправлять вредоносные данные через формы."],
-    ["3. Контент", "Материалы сайта носят информационный характер. Коммерческие условия уточняются индивидуально при обращении в компанию."],
-    ["4. Обратная связь", "При отправке формы пользователь подтверждает корректность предоставленных контактных данных."],
-    ["5. Изменения", "Администрация может обновлять сайт, структуру страниц и условия использования без предварительного уведомления."],
-  ],
-  en: [
-    ["1. Subject", "The website provides information about the company, services, projects, vacancies and contacts."],
-    ["2. Website use", "The user agrees to use the website lawfully, not disrupt the interface and not send malicious data through forms."],
-    ["3. Content", "Website materials are informational. Commercial terms are clarified individually when contacting the company."],
-    ["4. Feedback", "By sending a form, the user confirms that the provided contact data is correct."],
-    ["5. Changes", "The administration may update the website, page structure and terms of use without prior notice."],
-  ],
-  zh: [
-    ["1. 协议内容", "网站提供关于公司、服务、项目、职位和联系方式的信息。"],
-    ["2. 网站使用", "用户同意合法使用网站，不干扰界面运行，不通过表单发送恶意数据。"],
-    ["3. 内容", "网站材料仅供参考。商务条件将在联系公司时单独确认。"],
-    ["4. 反馈", "提交表单即表示用户确认所提供的联系方式正确。"],
-    ["5. 变更", "管理方可在不提前通知的情况下更新网站、页面结构和使用条款。"],
-  ],
+type LegalSection = {
+  title: string;
+  paragraphs?: string[];
+  list?: string[];
 };
+
+type AgreementCopy = {
+  lead: string;
+  updated: string;
+  intro: string;
+  quickTitle: string;
+  quick: { label: string; value: string }[];
+  sections: LegalSection[];
+  linksTitle: string;
+  links: { label: string; href: string }[];
+};
+
+const agreementCopy: Record<Lang, AgreementCopy> = {
+  ru: {
+    lead:
+      "Настоящее Пользовательское соглашение регулирует порядок доступа к сайту ООО «ТЕКТОНИКА», использования информационных материалов, форм обратной связи, интерактивной карты проектов, CMS-подготовки и иных разделов сайта.",
+    updated: "Редакция от 07.06.2026",
+    intro:
+      "Используя сайт, пользователь подтверждает, что ознакомился с настоящим Соглашением, Политикой конфиденциальности и уведомлением о конфиденциальности. Если пользователь не согласен с условиями, он должен прекратить использование сайта.",
+    quickTitle: "Основные условия",
+    quick: [
+      { label: "Владелец сайта", value: "ООО «ТЕКТОНИКА», ИНН 2700023021, ОГРН 1232700019860" },
+      { label: "Назначение сайта", value: "Информационная презентация компании, услуг, проектов, научной деятельности, вакансий и контактов" },
+      { label: "Не является офертой", value: "Материалы сайта не являются публичной офертой, если прямо не указано иное" },
+      { label: "Связь", value: "Форма обратной связи, email tektonikayur16@gmail.com, телефоны компании" },
+      { label: "Право", value: "Законодательство Российской Федерации" },
+    ],
+    sections: [
+      {
+        title: "1. Общие положения",
+        paragraphs: [
+          "Сайт является информационным ресурсом ООО «ТЕКТОНИКА» и предназначен для предоставления сведений о компании, направлениях деятельности, услугах, проектном опыте, географии работ, научных материалах, вакансиях и контактной информации.",
+          "Соглашение является внутренним документом владельца сайта, определяющим правила использования сайта пользователями. Доступ к сайту предоставляется при условии соблюдения настоящих правил.",
+          "Использование отдельных функций сайта может дополнительно регулироваться Политикой конфиденциальности, уведомлением о конфиденциальности, согласием на обработку персональных данных или иными документами, размещенными на сайте.",
+        ],
+      },
+      {
+        title: "2. Термины",
+        list: [
+          "Сайт — совокупность страниц, интерфейсов, изображений, текстов, картографических материалов, программного кода и иных элементов, доступных по домену владельца сайта и связанным адресам.",
+          "Пользователь — любое лицо, осуществляющее доступ к сайту, просматривающее материалы, использующее формы или иные функции сайта.",
+          "Владелец сайта — ООО «ТЕКТОНИКА».",
+          "Материалы сайта — тексты, изображения, фотографии, дизайн, структура, элементы интерфейса, сведения о проектах, услугах, вакансиях и иные объекты, размещенные на сайте.",
+          "CMS/административная панель — закрытый раздел сайта, предназначенный для управления контентом уполномоченными лицами владельца сайта.",
+        ],
+      },
+      {
+        title: "3. Акцепт и момент применения Соглашения",
+        paragraphs: [
+          "Соглашение применяется с момента начала использования сайта пользователем: открытия страницы, перехода по разделам, использования формы обратной связи, взаимодействия с картой, выбора языка или иных действий в интерфейсе.",
+          "Продолжение использования сайта означает согласие пользователя соблюдать Соглашение в той части, которая применима к соответствующей функциональности.",
+          "Направление формы обратной связи не означает автоматического заключения договора на выполнение работ или оказание услуг. Коммерческие условия, состав работ, сроки, стоимость и ответственность сторон определяются отдельным договором или перепиской уполномоченных лиц.",
+        ],
+      },
+      {
+        title: "4. Информационный характер материалов и отсутствие публичной оферты",
+        paragraphs: [
+          "Материалы сайта носят справочный и презентационный характер. Описание услуг, проектов, технических возможностей, вакансий, географии работ, картографических точек и иных сведений не является публичной офертой в смысле статьи 437 Гражданского кодекса РФ, если прямо не указано иное.",
+          "Владелец сайта вправе изменять состав услуг, описание работ, проектные карточки, вакансии, изображения, карту, структуру разделов и иные материалы без предварительного уведомления пользователя.",
+          "Сведения о проектах и географии работ могут включать ориентировочные координаты, региональные привязки или обобщенное описание территории. Точные координаты, состав выполненных работ и коммерчески значимые условия уточняются индивидуально.",
+        ],
+      },
+      {
+        title: "5. Правила использования сайта",
+        list: [
+          "Пользователь обязуется использовать сайт добросовестно, законно и исключительно в целях получения информации о компании или направления обращения владельцу сайта.",
+          "Запрещается нарушать работоспособность сайта, пытаться получить несанкционированный доступ к CMS, backend, базе данных, учетным записям, исходному коду или служебной инфраструктуре.",
+          "Запрещается отправлять через формы спам, вредоносный код, ложные сведения, сообщения, нарушающие права третьих лиц, коммерческую тайну, персональные данные третьих лиц без законного основания.",
+          "Запрещается автоматизированный сбор данных, скрейпинг, массовые запросы, обход технических ограничений, копирование структуры сайта или материалов в объеме, выходящем за пределы обычного просмотра.",
+          "Пользователь несет ответственность за достоверность сведений, которые самостоятельно указывает в формах обратной связи.",
+        ],
+      },
+      {
+        title: "6. Формы обратной связи и коммуникация",
+        paragraphs: [
+          "При отправке формы пользователь подтверждает, что указанные сведения являются корректными, принадлежат ему или используются им на законном основании, а содержание обращения не нарушает законодательство РФ и права третьих лиц.",
+          "Владелец сайта вправе не отвечать на обращения, содержащие спам, оскорбления, угрозы, вредоносные ссылки, незаконные предложения, недостоверные контакты или сведения, не относящиеся к деятельности компании.",
+          "Ответ на обращение не является согласием на заключение договора, принятием заказа или обязательством выполнить работы, если иное прямо не следует из отдельной письменной договоренности.",
+        ],
+      },
+      {
+        title: "7. Интеллектуальные права",
+        paragraphs: [
+          "Исключительные права на дизайн сайта, структуру интерфейса, тексты, изображения, фотографии, графические элементы, программный код, подбор и расположение материалов принадлежат владельцу сайта, его подрядчикам, правообладателям или иным лицам на законном основании.",
+          "Пользователь вправе просматривать материалы сайта для личного информационного ознакомления. Любое копирование, переработка, распространение, публикация, коммерческое использование, создание производных материалов или использование элементов сайта в иных проектах допускается только с предварительного письменного согласия правообладателя, если иное не предусмотрено законом.",
+          "Товарные знаки, фирменные наименования, логотипы, названия компаний, изображения объектов и иные средства индивидуализации используются на сайте в информационных целях и охраняются законодательством.",
+        ],
+      },
+      {
+        title: "8. Картографические материалы и внешние сервисы",
+        paragraphs: [
+          "Интерактивная карта на сайте является визуальным инструментом для представления географии работ и проектного опыта. Она может использовать внешние картографические тайлы, географические координаты, маркеры и иные технические данные.",
+          "Картографическая подложка, координаты и подписи могут иметь технические ограничения и не предназначены для кадастрового, маркшейдерского, геодезического или иного официального использования.",
+          "Если пользователь заметил неточность в координатах, названии участка, регионе или составе работ, он может направить уточнение владельцу сайта по контактам, указанным на сайте.",
+        ],
+      },
+      {
+        title: "9. Закрытые разделы и CMS",
+        list: [
+          "Административная панель предназначена только для уполномоченных лиц владельца сайта.",
+          "Любая попытка входа в закрытые разделы без разрешения, подбор паролей, обход авторизации, вмешательство в API или базу данных запрещены.",
+          "Действия администратора могут журналироваться для обеспечения безопасности, контроля изменений и восстановления контента.",
+          "Передача учетных данных третьим лицам запрещена, если владелец сайта прямо не разрешил такую передачу.",
+        ],
+      },
+      {
+        title: "10. Ограничение ответственности",
+        paragraphs: [
+          "Сайт предоставляется в состоянии «как есть». Владелец сайта принимает разумные меры для актуальности и корректности материалов, но не гарантирует отсутствие технических ошибок, временной недоступности, неточностей, задержек обновления или несовместимости с отдельными устройствами и браузерами.",
+          "Владелец сайта не несет ответственности за убытки, возникшие вследствие использования или невозможности использования сайта, если иное не установлено обязательными нормами законодательства РФ.",
+          "Владелец сайта не отвечает за содержание, доступность и безопасность внешних сайтов и сервисов, ссылки на которые могут быть размещены на сайте, если такие ресурсы не находятся под контролем владельца сайта.",
+        ],
+      },
+      {
+        title: "11. Персональные данные",
+        paragraphs: [
+          "Обработка персональных данных пользователей осуществляется в соответствии с Политикой конфиденциальности, размещенной на сайте.",
+          "Используя формы обратной связи, пользователь подтверждает ознакомление с Политикой конфиденциальности и понимает, какие данные передаются владельцу сайта и для каких целей они используются.",
+        ],
+      },
+      {
+        title: "12. Изменение сайта и Соглашения",
+        paragraphs: [
+          "Владелец сайта вправе изменять, дополнять или удалять материалы сайта, временно ограничивать доступ к отдельным разделам, обновлять карту, CMS, дизайн, структуру страниц и настоящее Соглашение без предварительного уведомления.",
+          "Новая редакция Соглашения вступает в силу с момента размещения на сайте, если иной срок не указан в новой редакции.",
+        ],
+      },
+      {
+        title: "13. Применимое право и разрешение споров",
+        paragraphs: [
+          "К отношениям, связанным с использованием сайта, применяется законодательство Российской Федерации.",
+          "Споры и обращения рекомендуется предварительно направлять владельцу сайта по email: tektonikayur16@gmail.com. Если спор не урегулирован путем переговоров, он подлежит рассмотрению в порядке, установленном законодательством РФ.",
+        ],
+      },
+    ],
+    linksTitle: "Правовая база",
+    links: [
+      { label: "ГК РФ, статья 437 — публичная оферта", href: "https://www.consultant.ru/document/cons_doc_LAW_508490/1a77b2ec302d6a384a228dff59e53680ccffaaca/" },
+      { label: "ГК РФ, статья 438 — акцепт", href: "https://www.consultant.ru/document/cons_doc_LAW_5142/912ecd30f8655752c373ce4bde835b3832154b11/" },
+      { label: "ГК РФ, статья 10 — пределы осуществления прав", href: "https://www.consultant.ru/document/cons_doc_LAW_5142/62129e15ab0e6008725f43d63284aef0bb12c2cf/" },
+      { label: "ГК РФ, статья 1229 — исключительное право", href: "https://www.consultant.ru/document/cons_doc_LAW_64629/98ad2641f95945c4b7956150260564c8b44028d9/" },
+      { label: "Федеральный закон № 149-ФЗ «Об информации...»", href: "https://www.consultant.ru/document/cons_doc_LAW_61798/" },
+    ],
+  },
+  en: {
+    lead:
+      "This User Agreement governs access to the TEKTONIKA LLC website and use of company information, contact forms, project map, CMS-prepared content and other website sections.",
+    updated: "Version dated 07.06.2026",
+    intro:
+      "By using the website, the user confirms that they have reviewed this Agreement, the Privacy Policy and the privacy notice. If the user does not agree, they should stop using the website.",
+    quickTitle: "Main terms",
+    quick: [
+      { label: "Website owner", value: "TEKTONIKA LLC, INN 2700023021, OGRN 1232700019860" },
+      { label: "Purpose", value: "Information about the company, services, projects, research, vacancies and contacts" },
+      { label: "No public offer", value: "Website materials are not a public offer unless expressly stated otherwise" },
+      { label: "Contact", value: "Contact form and email tektonikayur16@gmail.com" },
+      { label: "Law", value: "Russian Federation law" },
+    ],
+    sections: [
+      {
+        title: "1. General provisions",
+        paragraphs: [
+          "The website is an information resource of TEKTONIKA LLC and provides information about the company, services, project experience, work geography, research materials, vacancies and contacts.",
+          "Access is provided on condition that the user complies with this Agreement and related website documents.",
+        ],
+      },
+      {
+        title: "2. Acceptance and use",
+        paragraphs: [
+          "The Agreement applies from the moment the user opens a page, navigates the website, submits a form, interacts with the map, selects a language or otherwise uses the interface.",
+          "Submitting a contact form does not automatically create a contract for services. Commercial terms, scope, deadlines, price and liability are determined separately.",
+        ],
+      },
+      {
+        title: "3. Informational content and no public offer",
+        paragraphs: [
+          "Website materials are for informational and presentation purposes. Descriptions of services, projects, technical capabilities, vacancies and map points are not a public offer unless expressly stated otherwise.",
+          "The owner may change services, project cards, vacancies, images, map data and website structure without prior notice.",
+        ],
+      },
+      {
+        title: "4. User obligations",
+        list: [
+          "Use the website lawfully and in good faith.",
+          "Do not interfere with website operation or attempt unauthorized access to CMS, backend, databases, accounts or infrastructure.",
+          "Do not submit spam, malicious code, false information, unlawful content or third-party personal data without a lawful basis.",
+          "Do not scrape, mass-copy, bypass technical restrictions or use website materials outside ordinary viewing without permission.",
+        ],
+      },
+      {
+        title: "5. Contact forms",
+        paragraphs: [
+          "When submitting a form, the user confirms that the provided information is correct and lawful.",
+          "The owner may ignore requests containing spam, threats, unlawful offers, malicious links, false contacts or information unrelated to the company activity.",
+        ],
+      },
+      {
+        title: "6. Intellectual property",
+        paragraphs: [
+          "Rights to website design, structure, text, images, photographs, code and content selection belong to the website owner, contractors or other lawful right holders.",
+          "Materials may be viewed for personal informational purposes. Copying, redistribution, publication, commercial use or derivative works require prior permission unless permitted by law.",
+        ],
+      },
+      {
+        title: "7. Map and external services",
+        paragraphs: [
+          "The project map is a visual tool for presenting work geography. It may use external map tiles, coordinates and technical data.",
+          "Map data is not intended for cadastral, surveying, mine surveying or official geodetic use.",
+        ],
+      },
+      {
+        title: "8. Closed sections and CMS",
+        list: [
+          "The administrative panel is intended only for authorized persons.",
+          "Unauthorized login attempts, password guessing, API interference or database access are prohibited.",
+          "Administrator actions may be logged for security and content recovery.",
+        ],
+      },
+      {
+        title: "9. Liability and changes",
+        paragraphs: [
+          "The website is provided as is. The owner takes reasonable measures for accuracy but does not guarantee absence of errors, downtime or incompatibility with all devices.",
+          "The owner may update the website and this Agreement at any time. The new version applies from publication unless otherwise stated.",
+        ],
+      },
+      {
+        title: "10. Personal data and law",
+        paragraphs: [
+          "Personal data is processed under the Privacy Policy. Russian Federation law applies to website use.",
+          "Users may contact the owner at tektonikayur16@gmail.com before bringing a dispute to the competent authority or court.",
+        ],
+      },
+    ],
+    linksTitle: "Legal references",
+    links: [
+      { label: "Civil Code Article 437 - public offer", href: "https://www.consultant.ru/document/cons_doc_LAW_508490/1a77b2ec302d6a384a228dff59e53680ccffaaca/" },
+      { label: "Civil Code Article 438 - acceptance", href: "https://www.consultant.ru/document/cons_doc_LAW_5142/912ecd30f8655752c373ce4bde835b3832154b11/" },
+      { label: "Civil Code Article 1229 - exclusive right", href: "https://www.consultant.ru/document/cons_doc_LAW_64629/98ad2641f95945c4b7956150260564c8b44028d9/" },
+      { label: "Federal Law No. 149-FZ on Information", href: "https://www.consultant.ru/document/cons_doc_LAW_61798/" },
+    ],
+  },
+  zh: {
+    lead: "本用户协议规定用户访问 TEKTONIKA 网站以及使用公司信息、联系表单、项目地图、CMS 内容和其他网站部分的规则。",
+    updated: "版本日期：07.06.2026",
+    intro: "使用网站即表示用户已了解本协议、隐私政策和隐私通知。如不同意，应停止使用网站。",
+    quickTitle: "主要条款",
+    quick: [
+      { label: "网站所有者", value: "TEKTONIKA LLC, INN 2700023021, OGRN 1232700019860" },
+      { label: "目的", value: "展示公司、服务、项目、科研、招聘和联系方式" },
+      { label: "非公开要约", value: "除非另有明确说明，网站材料不构成公开要约" },
+      { label: "联系", value: "联系表单和 email tektonikayur16@gmail.com" },
+      { label: "法律", value: "俄罗斯联邦法律" },
+    ],
+    sections: [
+      {
+        title: "1. 一般条款",
+        paragraphs: [
+          "网站是 TEKTONIKA 的信息资源，用于提供公司、服务、项目经验、工作地域、科研材料、招聘和联系信息。",
+          "访问网站以遵守本协议和相关网站文件为条件。",
+        ],
+      },
+      {
+        title: "2. 接受和使用",
+        paragraphs: [
+          "用户打开页面、浏览网站、提交表单、使用地图、选择语言或以其他方式使用界面时，本协议开始适用。",
+          "提交联系表单不会自动形成服务合同。商业条件、工作范围、期限、价格和责任由双方另行确定。",
+        ],
+      },
+      {
+        title: "3. 信息性质",
+        paragraphs: [
+          "网站材料仅供信息和展示使用。除非明确说明，服务、项目、技术能力、招聘和地图点位描述不构成公开要约。",
+          "网站所有者可在不提前通知的情况下更新网站材料、地图数据和页面结构。",
+        ],
+      },
+      {
+        title: "4. 用户义务",
+        list: [
+          "合法、善意地使用网站。",
+          "不得破坏网站运行或未经授权访问 CMS、backend、数据库、账户或基础设施。",
+          "不得提交垃圾信息、恶意代码、虚假信息、违法内容或无法律依据的第三方个人数据。",
+          "未经许可不得批量抓取、复制、绕过技术限制或商业使用网站材料。",
+        ],
+      },
+      {
+        title: "5. 权利、地图和责任",
+        paragraphs: [
+          "网站设计、文本、图片、代码和内容结构的权利属于网站所有者、承包商或其他合法权利人。",
+          "项目地图仅为展示工作地域的可视化工具，不用于官方测绘、地籍或工程测量目的。",
+          "网站按现状提供。网站所有者采取合理措施保持准确性，但不保证没有错误、停机或与所有设备兼容。",
+        ],
+      },
+      {
+        title: "6. 个人数据和适用法律",
+        paragraphs: [
+          "个人数据按隐私政策处理。网站使用适用俄罗斯联邦法律。",
+          "用户可通过 email tektonikayur16@gmail.com 与网站所有者联系。",
+        ],
+      },
+    ],
+    linksTitle: "法律依据",
+    links: [
+      { label: "俄罗斯民法典第437条", href: "https://www.consultant.ru/document/cons_doc_LAW_508490/1a77b2ec302d6a384a228dff59e53680ccffaaca/" },
+      { label: "俄罗斯民法典第438条", href: "https://www.consultant.ru/document/cons_doc_LAW_5142/912ecd30f8655752c373ce4bde835b3832154b11/" },
+      { label: "俄罗斯民法典第1229条", href: "https://www.consultant.ru/document/cons_doc_LAW_64629/98ad2641f95945c4b7956150260564c8b44028d9/" },
+      { label: "第149-FZ号《信息法》", href: "https://www.consultant.ru/document/cons_doc_LAW_61798/" },
+    ],
+  },
+};
+
+function Section({ section }: { section: LegalSection }) {
+  return (
+    <article className="border-b border-slate-200 pb-8">
+      <h2 className="text-2xl font-extrabold leading-tight text-slate-950">{section.title}</h2>
+      {section.paragraphs?.map((paragraph) => (
+        <p key={paragraph} className="mt-4 text-base leading-8 text-slate-700">
+          {paragraph}
+        </p>
+      ))}
+      {section.list && (
+        <ul className="mt-4 grid gap-3 text-base leading-7 text-slate-700">
+          {section.list.map((item) => (
+            <li key={item} className="border-l-2 border-[#0b4fa3] pl-4">
+              {item}
+            </li>
+          ))}
+        </ul>
+      )}
+    </article>
+  );
+}
 
 export default function Agreement() {
   const { lang, t } = useI18n();
+  const copy = agreementCopy[lang];
 
   return (
     <Layout>
       <section className="technical-surface text-white">
         <div className="site-container py-16 md:py-24">
-          <h1 className="text-4xl font-extrabold md:text-6xl">{t.legal.agreementTitle}</h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-200">{t.legal.agreementText}</p>
+          <p className="text-sm font-extrabold uppercase tracking-[0.22em] text-[#93c5fd]">{copy.updated}</p>
+          <h1 className="mt-4 text-4xl font-extrabold md:text-6xl">{t.legal.agreementTitle}</h1>
+          <p className="mt-6 max-w-4xl text-lg leading-8 text-slate-200">{copy.lead}</p>
         </div>
       </section>
 
       <section className="section-band bg-white">
-        <div className="site-container max-w-4xl">
-          <div className="grid gap-8">
-            {sections[lang].map(([title, text]) => (
-              <article key={title} className="border-b border-slate-200 pb-6">
-                <h2 className="text-2xl font-extrabold text-slate-950">{title}</h2>
-                <p className="mt-3 text-lg leading-8 text-slate-600">{text}</p>
-              </article>
-            ))}
+        <div className="site-container grid gap-10 lg:grid-cols-[360px_1fr]">
+          <aside className="h-fit border border-slate-200 bg-slate-50 p-6 lg:sticky lg:top-40">
+            <h2 className="text-xl font-extrabold text-slate-950">{copy.quickTitle}</h2>
+            <div className="mt-5 grid gap-4">
+              {copy.quick.map((item) => (
+                <div key={item.label} className="border-b border-slate-200 pb-4">
+                  <div className="text-xs font-extrabold uppercase tracking-[0.14em] text-[#0b4fa3]">{item.label}</div>
+                  <div className="mt-2 text-sm font-semibold leading-6 text-slate-700">{item.value}</div>
+                </div>
+              ))}
+            </div>
+            <h3 className="mt-7 text-sm font-extrabold uppercase tracking-[0.14em] text-slate-500">{copy.linksTitle}</h3>
+            <div className="mt-3 grid gap-2">
+              {copy.links.map((link) => (
+                <a key={link.href} href={link.href} target="_blank" rel="noreferrer" className="text-sm font-bold leading-6 text-[#0b4fa3] hover:text-[#d71920]">
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </aside>
+
+          <div>
+            <div className="mb-10 border-l-4 border-[#d71920] bg-slate-50 p-6 text-lg font-semibold leading-8 text-slate-800">
+              {copy.intro}
+            </div>
+            <div className="grid gap-8">
+              {copy.sections.map((section) => (
+                <Section key={section.title} section={section} />
+              ))}
+            </div>
           </div>
         </div>
       </section>
