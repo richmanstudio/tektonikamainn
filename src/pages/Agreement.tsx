@@ -152,7 +152,7 @@ const agreementCopy: Record<Lang, AgreementCopy> = {
   },
   en: {
     lead:
-      "This User Agreement governs access to the TEKTONIKA LLC website and use of company information, contact forms, project map, CMS-prepared content and other website sections.",
+      "This User Agreement governs access to the TEKTONIKA LLC website and use of company information, contact forms, project map, website content and other sections.",
     updated: "Version dated 07.06.2026",
     intro:
       "By using the website, the user confirms that they have reviewed this Agreement, the Privacy Policy and the privacy notice. If the user does not agree, they should stop using the website.",

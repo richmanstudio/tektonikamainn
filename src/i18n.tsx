@@ -182,7 +182,7 @@ const dictionaries = {
     },
     media: {
       title: "Медиа",
-      text: "Фотографии организованы по альбомам и годам. Текущие материалы сайта находятся в альбоме 2024, альбом 2025 подготовлен под новое пополнение.",
+      text: "Фотографии организованы по альбомам и годам. В разделе публикуются материалы полевых сезонов, экспедиций и производственных работ.",
       album2024: "Полевой сезон 2024",
       album2025: "Полевой сезон 2025",
       photos: "Фотографий",
@@ -191,7 +191,7 @@ const dictionaries = {
     },
     careers: {
       title: "Карьера",
-      text: "Отклики принимаются по телефону и электронной почте. Вакансии можно будет управлять через будущую админ-панель.",
+      text: "Отклики принимаются по телефону и электронной почте. Соискателям достаточно указать опыт, желаемую позицию и удобный способ связи.",
       search: "Поиск вакансий",
       placeholder: "Например: повар",
       howTitle: "Как откликнуться",
@@ -244,13 +244,13 @@ const dictionaries = {
     admin: {
       title: "Панель администратора",
       loginTitle: "Вход для редактора",
-      loginText: "Фронтенд-заготовка под будущий backend на Python и MySQL. Сейчас авторизация проверяется локально.",
+      loginText: "Закрытый раздел для управления материалами сайта. Доступ предоставляется только уполномоченным пользователям.",
       login: "Логин",
       password: "Пароль",
       enter: "Войти",
       wrong: "Неверный логин или пароль",
       exit: "Выйти",
-      dashboardText: "Здесь подготовлены разделы, которые позже будут подключены к API: страницы, проекты, статьи, вакансии и медиа.",
+      dashboardText: "Разделы управления контентом: страницы, проекты, статьи, вакансии и медиа.",
       sections: ["Страницы сайта", "Проекты", "Научные статьи", "Вакансии", "Медиа-альбомы"],
       draftTitle: "Черновик контента",
       save: "Сохранить черновик",
@@ -314,8 +314,8 @@ dictionaries.en = {
   servicePage: { title: "TEKTONIKA services", text: "A full cycle of geological and geophysical surveys: from field routes and measurements to interpretation, 3D models and reports.", designTitle: "Designing a method package for the site", designText: "Methods are selected for the geological task, observation grid, site accessibility and reporting format.", dataTitle: "Data ready for review and transfer", dataText: "The office team prepares models, maps, sections and graphic appendices for technical and management decisions.", ctaTitle: "Need an estimate or work scope?", ctaText: "Send initial site data and the team will prepare a proposal." },
   projects: { ...dictionaries.ru.projects, title: "Projects", text: "Company projects and team projects are separated. Header links open the page with the right type and region filter.", company: "Company projects", team: "Team projects", regions: "Regions", years: "Years", count: "Projects shown" },
   research: { ...dictionaries.ru.research, title: "Research", text: "A feed of applied articles on methods, data interpretation, UAV and laboratory measurements.", articlesTitle: "Research articles", read: "Read article" },
-  media: { ...dictionaries.ru.media, title: "Media", text: "Photos are organized by albums and years. Current materials are in the 2024 album, and 2025 is prepared for future updates.", album2024: "Field season 2024", album2025: "Field season 2025", photos: "Photos", emptyTitle: "Album ready for content", emptyText: "Photos for the 2025 season can be added to a separate folder and connected to this section." },
-  careers: { ...dictionaries.ru.careers, title: "Careers", text: "Applications are accepted by phone and email. Vacancies will later be managed through the admin panel.", search: "Vacancy search", placeholder: "Example: cook", howTitle: "How to apply", howText: "Email or call us. Mention the vacancy, your experience, fieldwork availability and preferred contact method.", benefits: ["Official employment", "Travel to and from the work site paid", "Workwear, PPE and medical check compensation"] },
+  media: { ...dictionaries.ru.media, title: "Media", text: "Photos are organized by albums and years. The section contains materials from field seasons, expeditions and production work.", album2024: "Field season 2024", album2025: "Field season 2025", photos: "Photos", emptyTitle: "Album awaiting new materials", emptyText: "New field materials will appear here after editorial selection." },
+  careers: { ...dictionaries.ru.careers, title: "Careers", text: "Applications are accepted by phone and email. Candidates can indicate their experience, desired role and preferred contact method.", search: "Vacancy search", placeholder: "Example: cook", howTitle: "How to apply", howText: "Email or call us. Mention the vacancy, your experience, fieldwork availability and preferred contact method.", benefits: ["Official employment", "Travel to and from the work site paid", "Workwear, PPE and medical check compensation"] },
   vacancies: [
     { id: "cook", title: "Cook (field kitchen)", location: "Field work", salary: "150,000 RUB", type: "Shift / season", description: "We are looking for a cook for field operations. Official employment, paid travel, workwear, PPE and medical check compensation are provided." },
     { id: "geophysicist", title: "Field geophysicist", location: "Khabarovsk / field projects", salary: "by interview", type: "Project work", description: "Field measurements, data quality control, primary processing and participation in report preparation." },
@@ -324,7 +324,7 @@ dictionaries.en = {
   contacts: { ...dictionaries.ru.contacts, title: "Contacts", text: "TEKTONIKA office is located in Khabarovsk. Contact the team to discuss the site, work scope and timeline.", address: "Address", phone: "Phone", sendTitle: "Send a message", sendText: "Describe the task, region and desired deliverable format.", success: "Message sent. We will contact you.", error: "Message could not be sent. Please contact us by phone or email.", name: "Your name", subject: "Subject", message: "Message", sending: "Sending...", send: "Send message" },
   about: { ...dictionaries.ru.about, title: "About TEKTONIKA LLC", p1: "The company was founded in 2024 after the reorganization of GEPART LLC. The team had worked at GEPART since its foundation in 2015 in management and engineering roles and participated in almost all its projects.", p2: "Today TEKTONIKA performs a wide range of geological and geophysical surveys, works with topography and implements UAV-based technologies.", legal: "Legal information", account: "Settlement account", address: "Address", cards: [{ title: "Team", text: "The permanent team has worked together for more than 15 years and covers field, office and production workflows." }, { title: "UAV production", text: "The workshop is equipped with 3D printers, CNC machines, oscilloscopes and industrial soldering stations." }, { title: "Geography", text: "The team has project experience in Khabarovsk and Primorsky Krai, Chukotka, Magadan and Amur Regions, and Yakutia." }] },
   footer: { navigation: "Navigation", contacts: "Contacts", rights: "All rights reserved.", privacy: "Privacy policy", agreement: "User agreement" },
-  admin: { ...dictionaries.ru.admin, title: "Admin panel", loginTitle: "Editor login", loginText: "Frontend foundation for the future Python and MySQL backend. Authentication is local for now.", login: "Login", password: "Password", enter: "Sign in", wrong: "Wrong login or password", exit: "Log out", dashboardText: "Sections prepared for API integration: pages, projects, articles, vacancies and media.", sections: ["Site pages", "Projects", "Research articles", "Vacancies", "Media albums"], draftTitle: "Content draft", save: "Save draft" },
+  admin: { ...dictionaries.ru.admin, title: "Admin panel", loginTitle: "Editor login", loginText: "Closed section for managing website materials. Access is available only to authorized users.", login: "Login", password: "Password", enter: "Sign in", wrong: "Wrong login or password", exit: "Log out", dashboardText: "Content management sections: pages, projects, articles, vacancies and media.", sections: ["Site pages", "Projects", "Research articles", "Vacancies", "Media albums"], draftTitle: "Content draft", save: "Save draft" },
   legal: { privacyTitle: "Privacy policy", privacyText: "We care about protecting your personal data.", agreementTitle: "User agreement", agreementText: "This agreement governs the relationship between the user and TEKTONIKA LLC." },
   notFound: { title: "Page not found", text: "The requested page does not exist or has been moved." },
 };

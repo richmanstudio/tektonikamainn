@@ -62,7 +62,7 @@ const copy = {
     mapLabel: "Топографическая карта работ",
     details: "Открыть проекты",
     hint: "Наводите на маркеры, кликайте по списку или меняйте слой фильтра",
-    source: "Картографическая подложка: Esri World Physical Map. Точные координаты отдельных участков можно уточнить в CMS.",
+    source: "Картографическая подложка: Esri World Physical Map. Координаты отдельных участков уточняются по проектной документации.",
     precision: {
       site: "точка участка",
       district: "район работ",
@@ -83,7 +83,7 @@ const copy = {
     mapLabel: "Topographic work map",
     details: "Open projects",
     hint: "Hover markers, click the list or switch the layer filter",
-    source: "Base map: Esri World Physical Map. Exact coordinates for selected sites can be refined in the CMS.",
+    source: "Base map: Esri World Physical Map. Exact coordinates for selected sites are refined against project documentation.",
     precision: {
       site: "site point",
       district: "work district",
@@ -104,7 +104,7 @@ const copy = {
     mapLabel: "地形工作地图",
     details: "打开项目",
     hint: "悬停标记、点击列表或切换筛选",
-    source: "底图：Esri World Physical Map。部分点位坐标可在 CMS 中调整。",
+    source: "底图：Esri World Physical Map。部分点位坐标以项目资料为准。",
     precision: {
       site: "区块点位",
       district: "工作区域",
