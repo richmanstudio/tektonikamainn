@@ -2,7 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, BookOpen, ChevronDown, Menu, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.webp";
 import { company } from "../content/siteData";
 import { languages, type Lang, useI18n } from "../i18n";
 import { useCmsContent } from "../cms";
