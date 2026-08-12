@@ -3,7 +3,7 @@ import { useState } from "react";
 import Layout from "../layouts/MainLayout";
 import { useI18n } from "../i18n";
 
-const photoModules2024 = import.meta.glob<{ default: string }>("../assets/photos/season-2024/*.{jpg,JPG,png,PNG}", { eager: true });
+const photoModules2024 = import.meta.glob<{ default: string }>("../assets/photos/season-2024/*.{jpg,JPG,png,PNG,webp}", { eager: true });
 const photos2024 = Object.values(photoModules2024).map((module) => module.default);
 
 export default function Media() {

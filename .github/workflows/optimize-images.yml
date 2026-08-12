@@ -1,0 +1,67 @@
+name: Optimize images and validate SEO build
+
+on:
+  push:
+    branches:
+      - agent/seo-performance
+    paths:
+      - "src/**"
+      - "index.html"
+      - "package.json"
+      - "package-lock.json"
+      - "scripts/**"
+      - ".github/workflows/optimize-images.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: image-optimization-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  optimize-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install project dependencies
+        run: npm ci
+
+      - name: Optimize newly added raster assets
+        shell: bash
+        run: |
+          if find src/assets -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) | grep -q .; then
+            npm install --no-save --package-lock=false sharp@0.34.3
+            node scripts/optimize-images.mjs
+          else
+            echo "No legacy raster assets require conversion."
+          fi
+
+      - name: Validate production build and SEO generation
+        run: npm run build
+
+      - name: Commit optimized assets if generated
+        shell: bash
+        run: |
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No generated repository changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "perf: optimize raster assets"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin HEAD:"${GITHUB_REF_NAME}"

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Building2, MapPin, Users } from "lucide-react";
-import logo from "../assets/logo.png";
-import fieldImg from "../assets/presentation/image5.png";
+import logo from "../assets/logo.webp";
+import fieldImg from "../assets/presentation/image5.webp";
 import Layout from "../layouts/MainLayout";
 import { company } from "../content/siteData";
 import { useI18n } from "../i18n";

@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import { Activity, ArrowRight, Database, Factory, FlaskConical, Mountain, Plane, Zap } from "lucide-react";
 import { Link } from "react-router-dom";
-import labImg from "../assets/presentation/image10.png";
-import topoImg from "../assets/presentation/image3.jpeg";
+import labImg from "../assets/presentation/image10.webp";
+import topoImg from "../assets/presentation/image3.webp";
 import Layout from "../layouts/MainLayout";
 import { useI18n } from "../i18n";
 

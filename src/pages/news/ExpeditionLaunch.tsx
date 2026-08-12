@@ -1,6 +1,6 @@
 import React from 'react';
 import Layout from '../../layouts/MainLayout';
-import hero from '../../assets/abouthero-bg.jpg';
+import hero from '../../assets/abouthero-bg.webp';
 import { useI18n } from '../../i18n';
 
 const ARTICLE = {
