@@ -6,6 +6,7 @@ import AppRoutes from "./routes/index";
 import { LanguageProvider, type Lang } from "./i18n";
 import { CmsProvider } from "./cms";
 import LanguageUrlSync from "./components/LanguageUrlSync";
+import LocaleSeoOverrides from "./components/LocaleSeoOverrides";
 import SeoManager from "./components/SeoManager";
 import "./index.css";
 
@@ -23,6 +24,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         <CmsProvider>
           <LanguageUrlSync />
           <SeoManager />
+          <LocaleSeoOverrides />
           <AppRoutes />
         </CmsProvider>
       </LanguageProvider>
