@@ -5,6 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import AppRoutes from "./routes/index";
 import { LanguageProvider } from "./i18n";
 import { CmsProvider } from "./cms";
+import SeoManager from "./components/SeoManager";
 import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -12,6 +13,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     <LanguageProvider>
       <CmsProvider>
         <BrowserRouter>
+          <SeoManager />
           <AppRoutes />
         </BrowserRouter>
       </CmsProvider>
