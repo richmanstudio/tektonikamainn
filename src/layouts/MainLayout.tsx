@@ -5,7 +5,6 @@ import { useLocation } from "react-router-dom";
 import Footer from "../components/Footer";
 import Header from "../components/Header";
 import PrivacyNotice from "../components/PrivacyNotice";
-import SeoManager from "../components/SeoManager";
 import { useI18n } from "../i18n";
 
 type Props = {
@@ -30,7 +29,6 @@ export default function MainLayout({ children }: Props) {
 
   return (
     <>
-      <SeoManager />
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[80] focus:rounded-md focus:bg-[#0b4fa3] focus:px-4 focus:py-2 focus:text-white">
         {lang === "ru" ? "Перейти к содержимому" : lang === "zh" ? "跳到内容" : "Skip to content"}
       </a>
