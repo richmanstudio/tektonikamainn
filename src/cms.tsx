@@ -1,17 +1,7 @@
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import type { CmsEntry, CmsMediaItem, CmsPageBlock, CmsService } from "./content/cmsTypes";
 import api from "./utils/api";
 import { useI18n } from "./i18n";
-
-type CmsEntry = {
-  id: number;
-  collection: string;
-  slug: string;
-  language: string;
-  title: string;
-  payload: Record<string, any>;
-  status: "draft" | "published";
-  sort_order: number;
-};
 
 type CmsSite = Partial<Record<"projects" | "research" | "vacancies" | "services" | "pages" | "media", CmsEntry[]>>;
 
@@ -21,6 +11,9 @@ type CmsContent = {
   projectsGroups: any[];
   researchArticles: any[];
   vacancies: any[];
+  services: CmsService[];
+  pages: Record<string, CmsPageBlock>;
+  media: CmsMediaItem[];
 };
 
 const CmsContext = createContext<CmsContent>({
@@ -29,19 +22,25 @@ const CmsContext = createContext<CmsContent>({
   projectsGroups: [],
   researchArticles: [],
   vacancies: [],
+  services: [],
+  pages: {},
+  media: [],
 });
 
 function buildProjects(entries: CmsEntry[] | undefined, fallbackGroups: any[]) {
   if (!entries?.length) return fallbackGroups;
   const grouped = new Map<string, any[]>();
   for (const entry of entries) {
-    const type = entry.payload.type || "Проекты";
+    const type = String(entry.payload.type || "Проекты");
     const project = {
+      slug: entry.slug,
       title: entry.title,
-      client: entry.payload.client || "",
-      region: entry.payload.region || "",
+      client: String(entry.payload.client || ""),
+      region: String(entry.payload.region || ""),
       year: Number(entry.payload.year) || new Date().getFullYear(),
-      scope: entry.payload.scope || entry.payload.description || "",
+      scope: String(entry.payload.scope || entry.payload.description || ""),
+      result: String(entry.payload.result || ""),
+      technologies: Array.isArray(entry.payload.technologies) ? entry.payload.technologies : [],
     };
     grouped.set(type, [...(grouped.get(type) || []), project]);
   }
@@ -51,12 +50,15 @@ function buildProjects(entries: CmsEntry[] | undefined, fallbackGroups: any[]) {
 function buildResearch(entries: CmsEntry[] | undefined, fallbackArticles: any[]) {
   if (!entries?.length) return fallbackArticles;
   return entries.map((entry) => ({
+    slug: entry.slug,
     title: entry.title,
-    date: entry.payload.date || "",
-    tag: entry.payload.tag || "",
-    excerpt: entry.payload.excerpt || entry.payload.description || "",
-    author: entry.payload.author || "",
-    body: entry.payload.body || "",
+    date: String(entry.payload.date || ""),
+    tag: String(entry.payload.tag || ""),
+    excerpt: String(entry.payload.excerpt || entry.payload.description || ""),
+    author: String(entry.payload.author || ""),
+    body: String(entry.payload.body || ""),
+    sourceUrl: String(entry.payload.sourceUrl || ""),
+    pdfUrl: String(entry.payload.pdfUrl || ""),
   }));
 }
 
@@ -65,10 +67,58 @@ function buildVacancies(entries: CmsEntry[] | undefined, fallbackVacancies: any[
   return entries.map((entry) => ({
     id: entry.slug,
     title: entry.title,
-    location: entry.payload.location || "",
-    salary: entry.payload.salary || "",
-    type: entry.payload.type || "",
-    description: entry.payload.description || "",
+    location: String(entry.payload.location || ""),
+    salary: String(entry.payload.salary || ""),
+    type: String(entry.payload.type || ""),
+    description: String(entry.payload.description || ""),
+    requirements: Array.isArray(entry.payload.requirements) ? entry.payload.requirements : [],
+  }));
+}
+
+function buildServices(entries: CmsEntry[] | undefined, fallbackServices: any[]): CmsService[] {
+  if (!entries?.length) {
+    return fallbackServices.map((service: any, index: number) => ({
+      slug: service.slug || `service-${index + 1}`,
+      title: service.title,
+      description: service.description,
+      items: service.items || [],
+      accent: service.accent || "blue",
+    }));
+  }
+  return entries.map((entry) => ({
+    slug: entry.slug,
+    title: entry.title,
+    description: String(entry.payload.description || ""),
+    items: Array.isArray(entry.payload.items) ? entry.payload.items.map(String) : [],
+    accent: String(entry.payload.accent || "blue"),
+  }));
+}
+
+function buildPages(entries: CmsEntry[] | undefined): Record<string, CmsPageBlock> {
+  if (!entries?.length) return {};
+  return Object.fromEntries(
+    entries.map((entry) => [
+      entry.slug,
+      {
+        slug: entry.slug,
+        title: entry.title,
+        text: String(entry.payload.text || entry.payload.description || ""),
+        eyebrow: String(entry.payload.eyebrow || "") || undefined,
+        ctaLabel: String(entry.payload.ctaLabel || "") || undefined,
+        ctaHref: String(entry.payload.ctaHref || "") || undefined,
+      },
+    ])
+  );
+}
+
+function buildMedia(entries: CmsEntry[] | undefined): CmsMediaItem[] {
+  if (!entries?.length) return [];
+  return entries.map((entry) => ({
+    slug: entry.slug,
+    title: entry.title,
+    image: String(entry.payload.image || "") || undefined,
+    caption: String(entry.payload.caption || entry.payload.description || "") || undefined,
+    year: String(entry.payload.year || "") || undefined,
   }));
 }
 
@@ -79,26 +129,23 @@ export function CmsProvider({ children }: { children: ReactNode }) {
   const [source, setSource] = useState<"api" | "fallback">("fallback");
 
   useEffect(() => {
-    let alive = true;
+    const controller = new AbortController();
     setLoading(true);
     api
-      .get<CmsSite>("/public/site", { params: { lang } })
+      .get<CmsSite>("/public/site", { params: { lang }, signal: controller.signal })
       .then((response) => {
-        if (!alive) return;
         setSite(response.data);
         setSource("api");
       })
-      .catch(() => {
-        if (!alive) return;
+      .catch((error) => {
+        if (error?.code === "ERR_CANCELED") return;
         setSite({});
         setSource("fallback");
       })
       .finally(() => {
-        if (alive) setLoading(false);
+        if (!controller.signal.aborted) setLoading(false);
       });
-    return () => {
-      alive = false;
-    };
+    return () => controller.abort();
   }, [lang]);
 
   const value = useMemo<CmsContent>(
@@ -108,8 +155,11 @@ export function CmsProvider({ children }: { children: ReactNode }) {
       projectsGroups: buildProjects(site.projects, t.projects.groups),
       researchArticles: buildResearch(site.research, t.research.articles),
       vacancies: buildVacancies(site.vacancies, t.vacancies),
+      services: buildServices(site.services, t.services),
+      pages: buildPages(site.pages),
+      media: buildMedia(site.media),
     }),
-    [loading, site.projects, site.research, site.vacancies, source, t.projects.groups, t.research.articles, t.vacancies]
+    [loading, site, source, t]
   );
 
   return <CmsContext.Provider value={value}>{children}</CmsContext.Provider>;
