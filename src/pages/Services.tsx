@@ -16,33 +16,37 @@ const accentClasses: Record<string, string> = {
   green: "bg-[#218c54]",
 };
 
-const icons = [Mountain, Activity, Zap, Plane, Database, FlaskConical, Factory];
+const icons = [Mountain, Activity, Zap, Plane, Factory, FlaskConical, Database];
 
 export default function Services() {
   const { t } = useI18n();
   const cms = useCmsContent();
   const reduceMotion = useReducedMotion();
+  const page = cms.pages.services;
+  const pageTitle = page?.title || t.servicePage.title;
+  const pageText = page?.text || t.servicePage.text;
 
   return (
     <Layout>
       <section className="technical-surface text-white">
         <div className="site-container py-16 md:py-24">
-          <h1 className="max-w-4xl text-4xl font-extrabold leading-tight md:text-6xl">{t.servicePage.title}</h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-200">{t.servicePage.text}</p>
+          {page?.eyebrow && <div className="mb-4 text-sm font-bold uppercase tracking-[0.18em] text-blue-200">{page.eyebrow}</div>}
+          <h1 className="max-w-4xl text-4xl font-extrabold leading-tight md:text-6xl">{pageTitle}</h1>
+          <p className="mt-6 max-w-3xl text-lg leading-8 text-slate-200">{pageText}</p>
         </div>
       </section>
 
       <section className="section-band bg-white" aria-labelledby="services-list-title">
         <div className="site-container">
-          <h2 id="services-list-title" className="sr-only">{t.servicePage.title}</h2>
+          <h2 id="services-list-title" className="sr-only">{pageTitle}</h2>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {cms.services.map((service: any, index: number) => {
+            {cms.services.map((service, index) => {
               const Icon = icons[index] || Factory;
               const slug = service.slug?.startsWith("service-") ? SERVICE_SLUGS[index] : service.slug || SERVICE_SLUGS[index];
               const accent = accentClasses[service.accent] || accentClasses.blue;
               return (
                 <motion.article
-                  key={`${service.title}-${index}`}
+                  key={`${service.slug}-${index}`}
                   initial={reduceMotion ? false : { opacity: 0, y: 18 }}
                   whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -55,7 +59,7 @@ export default function Services() {
                     <h3 className="mt-5 text-2xl font-bold text-slate-950">{service.title}</h3>
                     <p className="mt-3 text-sm leading-6 text-slate-600">{service.description}</p>
                     <ul className="mt-5 grid gap-2">
-                      {(service.items || []).map((item: string) => (
+                      {service.items.map((item) => (
                         <li key={item} className="flex gap-2 text-sm text-slate-700">
                           <span className={`mt-2 h-2 w-2 shrink-0 ${accent}`} aria-hidden="true" />
                           {item}
@@ -63,8 +67,8 @@ export default function Services() {
                       ))}
                     </ul>
                     {slug && (
-                      <Link to={`/services/${slug}`} className="mt-6 inline-flex items-center gap-2 font-bold text-[#0b4fa3] underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4">
-                        Подробнее <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                      <Link to={`/services/${slug}`} className="mt-6 inline-flex items-center gap-2 font-bold text-[#0b4fa3] underline-offset-4 hover:underline">
+                        {t.common.readMore} <ArrowRight className="h-4 w-4" aria-hidden="true" />
                       </Link>
                     )}
                   </div>
@@ -100,8 +104,8 @@ export default function Services() {
             <h2 className="text-2xl font-extrabold text-slate-950">{t.servicePage.ctaTitle}</h2>
             <p className="mt-2 text-slate-600">{t.servicePage.ctaText}</p>
           </div>
-          <Link to="/contacts" className="btn-primary">
-            {t.common.contact} <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          <Link to={page?.ctaHref || "/contacts"} className="btn-primary">
+            {page?.ctaLabel || t.common.contact} <ArrowRight className="h-4 w-4" aria-hidden="true" />
           </Link>
         </div>
       </section>
