@@ -1,5 +1,6 @@
 import { createContext, type ReactNode, useContext, useEffect, useMemo, useState } from "react";
 import type { CmsEntry, CmsMediaItem, CmsPageBlock, CmsService } from "./content/cmsTypes";
+import { serviceCatalog } from "./content/serviceCatalog";
 import api from "./utils/api";
 import { useI18n } from "./i18n";
 
@@ -75,14 +76,16 @@ function buildVacancies(entries: CmsEntry[] | undefined, fallbackVacancies: any[
   }));
 }
 
-function buildServices(entries: CmsEntry[] | undefined, fallbackServices: any[]): CmsService[] {
+const serviceAccents = ["green", "blue", "yellow", "red", "blue", "green", "gray"];
+
+function buildServices(entries: CmsEntry[] | undefined, lang: "ru" | "en" | "zh"): CmsService[] {
   if (!entries?.length) {
-    return fallbackServices.map((service: any, index: number) => ({
-      slug: service.slug || `service-${index + 1}`,
-      title: service.title,
-      description: service.description,
-      items: service.items || [],
-      accent: service.accent || "blue",
+    return serviceCatalog.map((service, index) => ({
+      slug: service.slug,
+      title: service.title[lang],
+      description: service.description[lang],
+      items: service.benefits[lang],
+      accent: serviceAccents[index] || "blue",
     }));
   }
   return entries.map((entry) => ({
@@ -155,11 +158,11 @@ export function CmsProvider({ children }: { children: ReactNode }) {
       projectsGroups: buildProjects(site.projects, t.projects.groups),
       researchArticles: buildResearch(site.research, t.research.articles),
       vacancies: buildVacancies(site.vacancies, t.vacancies),
-      services: buildServices(site.services, t.services),
+      services: buildServices(site.services, lang),
       pages: buildPages(site.pages),
       media: buildMedia(site.media),
     }),
-    [loading, site, source, t]
+    [lang, loading, site, source, t.projects.groups, t.research.articles, t.vacancies]
   );
 
   return <CmsContext.Provider value={value}>{children}</CmsContext.Provider>;
