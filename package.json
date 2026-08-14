@@ -6,9 +6,11 @@
   "homepage": "https://richmanstudio.github.io/tektonikaaa",
   "scripts": {
     "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
     "build": "vite build",
     "postbuild": "node scripts/generate-seo-pages.mjs",
-    "predeploy": "npm run build",
+    "predeploy": "npm run typecheck && npm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
