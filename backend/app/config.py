@@ -31,11 +31,12 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_security(self) -> "Settings":
-        weak_markers = {"change-me-before-production", "secret", "password", "admin123"}
-        if self.app_secret_key.lower() in weak_markers:
+        secret = self.app_secret_key.strip().lower()
+        password_hash = self.admin_password_hash.strip().lower()
+        if secret.startswith(("replace", "change", "example")):
             raise ValueError("APP_SECRET_KEY must be a unique cryptographically-random value")
-        if not self.admin_password_hash.startswith("pbkdf2_sha256$"):
-            raise ValueError("ADMIN_PASSWORD_HASH must use the pbkdf2_sha256 format")
+        if password_hash.startswith(("replace", "change", "example")) or not self.admin_password_hash.startswith("pbkdf2_sha256$"):
+            raise ValueError("ADMIN_PASSWORD_HASH must use a real pbkdf2_sha256 hash")
         if self.app_env.lower() == "production":
             if any(origin.startswith("http://") for origin in self.cors_origin_list):
                 raise ValueError("Production CORS origins must use HTTPS")
