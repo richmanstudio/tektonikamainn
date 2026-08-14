@@ -32,8 +32,11 @@ jobs:
       - name: Install locked dependencies
         run: npm ci
 
-      - name: Apply non-breaking audit fixes
-        run: npm audit fix --omit=dev
+      - name: Update lockfile with non-breaking audit fixes
+        run: npm audit fix --package-lock-only
+
+      - name: Reinstall updated dependency tree
+        run: npm ci
 
       - name: Verify production dependency security
         run: npm audit --omit=dev --audit-level=high
