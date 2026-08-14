@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
+// One-time deterministic migration: preserve dictionary content while separating locale modules.
 const sourcePath = path.resolve("src/i18n.tsx");
 const targetDir = path.resolve("src/i18n");
 const localesDir = path.join(targetDir, "locales");
