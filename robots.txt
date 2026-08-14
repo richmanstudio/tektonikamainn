@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /tektonika-admin
+Disallow: /en/tektonika-admin
+Disallow: /zh/tektonika-admin
+
+Sitemap: https://www.tektonikadv.ru/sitemap.xml
+Host: www.tektonikadv.ru
