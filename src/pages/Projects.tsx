@@ -86,7 +86,7 @@ export default function Projects() {
                   {project.group}
                 </div>
                 <h2 className="text-2xl font-bold text-slate-950">{project.title}</h2>
-                <p className="mt-2 text-sm font-semibold text-[#0b4fa3]">{project.client}</p>
+                {project.client && <p className="mt-2 text-sm font-semibold text-[#0b4fa3]">{t.controls.organisation}: {project.client}</p>}
                 <p className="mt-4 text-sm leading-7 text-slate-600">{project.scope}</p>
               </article>
             ))}

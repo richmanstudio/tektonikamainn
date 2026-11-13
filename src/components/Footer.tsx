@@ -63,7 +63,13 @@ export default function Footer() {
             </li>
             <li className="flex gap-3">
               <Phone className="h-5 w-5 shrink-0 text-[#93c5fd]" />
-              <span>{company.phones.join(", ")}</span>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                {company.phones.map((phone) => (
+                  <a key={phone} href={`tel:${phone.replace(/[^+\d]/g, "")}`} className="whitespace-nowrap hover:text-white hover:underline">
+                    {phone}
+                  </a>
+                ))}
+              </div>
             </li>
             <li className="flex gap-3">
               <Mail className="h-5 w-5 shrink-0 text-[#93c5fd]" />

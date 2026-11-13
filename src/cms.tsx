@@ -43,6 +43,14 @@ function buildProjects(entries: CmsEntry[] | undefined, fallbackGroups: any[]) {
       result: String(entry.payload.result || ""),
       technologies: Array.isArray(entry.payload.technologies) ? entry.payload.technologies : [],
     };
+    // Older CMS entries may still have the region that appeared in the original catalogue.
+    if (
+      project.title === "Месторождение Сухой Лог" &&
+      project.region === "Красноярский край" &&
+      /(?:СЛ Золото|SL Zoloto)/iu.test(project.client)
+    ) {
+      project.region = "Иркутская область";
+    }
     grouped.set(type, [...(grouped.get(type) || []), project]);
   }
   return Array.from(grouped.entries()).map(([type, projects]) => ({ type, projects }));

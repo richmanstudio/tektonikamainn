@@ -67,6 +67,16 @@ export default function Header() {
   const utilityTone = transparent ? "text-white/95 drop-shadow-[0_1px_5px_rgba(0,0,0,0.95)]" : "text-slate-600";
   const cityTone = transparent ? "text-white/90" : "text-slate-500";
 
+  const languagePicker = (
+    <label className="relative w-fit">
+      <span className="sr-only">{t.controls.language}</span>
+      <select value={lang} onChange={(event) => setLang(event.target.value as Lang)} className="h-11 appearance-none border border-current bg-transparent pl-5 pr-10 text-sm font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2">
+        {languages.map((language) => <option key={language.code} value={language.code} className="text-slate-950">{language.label}</option>)}
+      </select>
+      <ChevronDown className="pointer-events-none absolute right-3 top-3.5 h-4 w-4" aria-hidden="true" />
+    </label>
+  );
+
   return (
     <header onMouseLeave={() => setMegaOpen(false)} className={`fixed inset-x-0 top-0 z-[90] transition ${transparent ? "bg-transparent" : "border-b border-slate-200 bg-[#f2f2f2] shadow-sm"}`}>
       <div className={`site-container hidden h-12 items-center justify-between text-sm font-semibold md:flex ${utilityTone}`}>
@@ -93,20 +103,14 @@ export default function Header() {
           })}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
-          <label className="relative">
-            <span className="sr-only">Language</span>
-            <select value={lang} onChange={(event) => setLang(event.target.value as Lang)} className={`h-11 appearance-none border bg-transparent pl-5 pr-10 text-sm font-bold outline-none ${transparent ? "border-white/45 text-white" : "border-slate-300 text-slate-900"}`}>
-              {languages.map((language) => <option key={language.code} value={language.code} className="text-slate-950">{language.label}</option>)}
-            </select>
-            <ChevronDown className={`pointer-events-none absolute right-3 top-3.5 h-4 w-4 ${transparent ? "text-white" : "text-slate-900"}`} aria-hidden="true" />
-          </label>
+        <div className={`hidden items-center gap-3 lg:flex ${tone}`}>
+          {languagePicker}
           <button type="button" onClick={() => setSearchOpen(true)} className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#0b4fa3] text-white transition hover:bg-[#083d7d]" aria-label={t.common.search} aria-haspopup="dialog" aria-expanded={searchOpen}>
             <Search className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
-        <button type="button" onClick={() => setOpen((value) => !value)} className={`inline-flex h-11 w-11 items-center justify-center border xl:hidden ${transparent ? "border-white/45 text-white" : "border-slate-300 bg-white text-slate-900"}`} aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} aria-controls="mobile-navigation">
+        <button type="button" onClick={() => setOpen((value) => !value)} className={`inline-flex h-11 w-11 items-center justify-center border xl:hidden ${transparent ? "border-white/45 text-white" : "border-slate-300 bg-white text-slate-900"}`} aria-label={open ? t.controls.closeMenu : t.controls.openMenu} aria-expanded={open} aria-controls="mobile-navigation">
           {open ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
         </button>
       </div>
@@ -139,6 +143,7 @@ export default function Header() {
         {open && (
           <motion.nav id="mobile-navigation" initial={reduceMotion ? false : { opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={reduceMotion ? undefined : { opacity: 0, height: 0 }} className="border-t border-slate-200 bg-[#f2f2f2] xl:hidden" aria-label={lang === "ru" ? "Мобильная навигация" : lang === "zh" ? "移动导航" : "Mobile navigation"}>
             <div className="site-container grid gap-1 py-4">
+              <div className="mb-2 text-slate-950 lg:hidden">{languagePicker}</div>
               {t.nav.map((item: { to: string; label: string }) => <Link key={item.to} to={item.to} aria-current={pathname === item.to ? "page" : undefined} className={`px-1 py-3 text-lg font-bold ${pathname === item.to ? "text-[#0b4fa3]" : "text-slate-900"}`}>{item.label}</Link>)}
               <button type="button" onClick={() => setSearchOpen(true)} className="mt-2 inline-flex items-center gap-3 px-1 py-3 text-left text-lg font-bold text-[#0b4fa3]"><Search className="h-5 w-5" aria-hidden="true" />{t.common.search}</button>
             </div>

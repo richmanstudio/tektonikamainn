@@ -4,7 +4,7 @@ import L, { type LatLngBoundsExpression, type Map as LeafletMap } from "leaflet"
 import { ArrowRight, BriefcaseBusiness, Building2, Crosshair, Layers, MapPinned } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import type { Lang } from "../i18n";
+import { type Lang, useI18n } from "../i18n";
 
 type ProjectGroup = {
   type: string;
@@ -26,7 +26,7 @@ type MapPoint = Project & {
   lon: number;
   lat: number;
   area: string;
-  precision: "site" | "district" | "region";
+  precision: "site" | "district" | "reference";
 };
 
 const pointGeoPositions: Record<string, Pick<MapPoint, "lon" | "lat" | "area" | "precision">> = {
@@ -34,24 +34,19 @@ const pointGeoPositions: Record<string, Pick<MapPoint, "lon" | "lat" | "area" | 
   "Люгинская площадь": { lon: 135.9, lat: 51.6, area: "Люгинская площадь", precision: "district" },
   "Участок Осенний": { lon: 133.9, lat: 45.1, area: "Приморье", precision: "district" },
   "Чульбатканская площадь": { lon: 136.0, lat: 53.0, area: "Чульбаткан", precision: "district" },
-  "Месторождение Сухой Лог": { lon: 115.7, lat: 58.4, area: "Бодайбинский район", precision: "district" },
+  // Reference point within the auction area (Russian Government Order No. 2550-r).
+  "Месторождение Сухой Лог": { lon: 115.24, lat: 58.616, area: "Бодайбинский район", precision: "reference" },
   "Фланги месторождения «Северное»": { lon: 125.5, lat: 58.3, area: "Южная Якутия", precision: "district" },
   "Нижний Биркачан": { lon: 159.889, lat: 63.919, area: "Нижний Биркачан", precision: "site" },
 };
 
-const fallbackPositions = [
-  { lon: 136.8, lat: 51.8, area: "Дальний Восток", precision: "region" as const },
-  { lon: 135.1, lat: 48.5, area: "Хабаровский край", precision: "region" as const },
-  { lon: 132.0, lat: 44.8, area: "Приморье", precision: "region" as const },
-  { lon: 129.7, lat: 62.0, area: "Якутия", precision: "region" as const },
-  { lon: 118.0, lat: 58.0, area: "Восточная Сибирь", precision: "region" as const },
-];
-
 const copy = {
   ru: {
     eyebrow: "География работ",
-    title: "Проекты на детальной карте Сибири и Дальнего Востока",
-    text: "Карта показывает фактическую географию работ на топографической подложке: рельеф, реки, населенные пункты и транспортные ориентиры помогают быстрее считать масштаб территории.",
+    title: "Избранные проекты",
+    text: "Часть маркеров показывает примерный район работ.",
+    zoomIn: "Приблизить карту",
+    zoomOut: "Отдалить карту",
     company: "Проекты компании",
     team: "Опыт сотрудников",
     all: "Все точки",
@@ -61,18 +56,20 @@ const copy = {
     route: "Сибирь — Якутия — Колыма — Приамурье — Приморье",
     mapLabel: "Топографическая карта работ",
     details: "Открыть проекты",
-    hint: "Наводите на маркеры, кликайте по списку или меняйте слой фильтра",
+    hint: "Выберите маркер или проект из списка.",
     source: "Картографическая подложка: Esri World Physical Map. Координаты отдельных участков уточняются по проектной документации.",
     precision: {
       site: "точка участка",
       district: "район работ",
-      region: "региональная привязка",
+      reference: "Ориентир в границах месторождения",
     },
   },
   en: {
     eyebrow: "Work geography",
-    title: "Projects on a detailed map of Siberia and the Far East",
-    text: "The map shows project geography on a topographic base: relief, rivers, settlements and transport references make the operating scale easier to read.",
+    title: "Selected projects",
+    text: "Some markers indicate the approximate survey area.",
+    zoomIn: "Zoom in",
+    zoomOut: "Zoom out",
     company: "Company projects",
     team: "Team experience",
     all: "All points",
@@ -82,18 +79,20 @@ const copy = {
     route: "Siberia - Yakutia - Kolyma - Amur region - Primorye",
     mapLabel: "Topographic work map",
     details: "Open projects",
-    hint: "Hover markers, click the list or switch the layer filter",
+    hint: "Select a marker or a project from the list.",
     source: "Base map: Esri World Physical Map. Exact coordinates for selected sites are refined against project documentation.",
     precision: {
       site: "site point",
       district: "work district",
-      region: "regional reference",
+      reference: "Reference point within the deposit area",
     },
   },
   zh: {
     eyebrow: "工作地域",
-    title: "西伯利亚与远东项目详图",
-    text: "地图以地形底图展示项目地理范围：地貌、河流、居民点和交通参照让区域尺度更清晰。",
+    title: "精选项目",
+    text: "部分标记表示大致作业区域。",
+    zoomIn: "放大地图",
+    zoomOut: "缩小地图",
     company: "公司项目",
     team: "团队经验",
     all: "全部点位",
@@ -103,12 +102,12 @@ const copy = {
     route: "西伯利亚 - 雅库特 - 科雷马 - 阿穆尔 - 滨海",
     mapLabel: "地形工作地图",
     details: "打开项目",
-    hint: "悬停标记、点击列表或切换筛选",
+    hint: "选择地图标记或列表中的项目。",
     source: "底图：Esri World Physical Map。部分点位坐标以项目资料为准。",
     precision: {
       site: "区块点位",
       district: "工作区域",
-      region: "区域定位",
+      reference: "矿区范围内的参考点",
     },
   },
 };
@@ -124,18 +123,17 @@ function normalizeCategory(group: string): MapPoint["category"] {
 }
 
 function buildMapPoints(groups: ProjectGroup[]) {
-  let fallbackIndex = 0;
   return groups.flatMap((group) =>
-    group.projects.map((project, index) => {
-      const fallback = fallbackPositions[fallbackIndex++ % fallbackPositions.length];
-      const position = pointGeoPositions[project.title] || fallback;
-      return {
+    group.projects.flatMap((project, index) => {
+      if (!Object.hasOwn(pointGeoPositions, project.title)) return [];
+      const position = pointGeoPositions[project.title];
+      return [{
         ...project,
         ...position,
         id: `${group.type}-${project.title}-${index}`,
         group: group.type,
         category: normalizeCategory(group.type),
-      };
+      }];
     })
   );
 }
@@ -166,20 +164,24 @@ function formatCoord(value: number) {
 }
 
 export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[]; lang: Lang }) {
-  const dict = copy[lang] || copy.ru;
+  const dict = copy[lang];
+  const { t } = useI18n();
   const points = useMemo(() => buildMapPoints(groups), [groups]);
   const [filter, setFilter] = useState<"all" | "company" | "team">("all");
-  const visiblePoints = points.filter((point) => filter === "all" || point.category === filter);
-  const [activeId, setActiveId] = useState(() => visiblePoints[0]?.id || "");
+  const visiblePoints = useMemo(
+    () => points.filter((point) => filter === "all" || point.category === filter),
+    [filter, points]
+  );
+  const [activeId, setActiveId] = useState("");
   const activePoint = visiblePoints.find((point) => point.id === activeId) || visiblePoints[0];
   const mapElementRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<LeafletMap | null>(null);
   const markerLayerRef = useRef<L.LayerGroup | null>(null);
+  const markers = useRef(new Map<string, L.Marker>());
 
   const setFiltered = (nextFilter: "all" | "company" | "team") => {
     setFilter(nextFilter);
-    const nextPoint = points.find((point) => nextFilter === "all" || point.category === nextFilter);
-    setActiveId(nextPoint?.id || "");
+    setActiveId("");
   };
 
   useEffect(() => {
@@ -192,7 +194,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
       maxBoundsViscosity: 0.45,
     });
 
-    L.control.zoom({ position: "bottomright" }).addTo(map);
+    L.control.zoom({ position: "bottomright", zoomInTitle: dict.zoomIn, zoomOutTitle: dict.zoomOut }).addTo(map);
     L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}", {
       maxZoom: 8,
       minZoom: 2,
@@ -207,7 +209,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
       mapRef.current = null;
       markerLayerRef.current = null;
     };
-  }, []);
+  }, [dict.zoomIn, dict.zoomOut]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -215,20 +217,26 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
     if (!map || !layer) return;
 
     layer.clearLayers();
+    markers.current.clear();
     visiblePoints.forEach((point) => {
       const marker = L.marker([point.lat, point.lon], {
-        icon: markerIcon(point, activePoint?.id === point.id),
+        icon: markerIcon(point, false),
         keyboard: true,
         title: point.title,
       });
-      marker.on("mouseover focus click", () => setActiveId(point.id));
-      marker.bindTooltip(`<strong>${point.title}</strong><br>${point.area}`, {
+      marker.on("click", () => setActiveId(point.id));
+      const tooltip = document.createElement("div");
+      const title = document.createElement("strong");
+      title.textContent = point.title;
+      tooltip.append(title, document.createElement("br"), point.area);
+      marker.bindTooltip(tooltip, {
         direction: "top",
         offset: [0, -14],
         opacity: 0.95,
         className: "tektonika-map-tooltip",
       });
       layer.addLayer(marker);
+      markers.current.set(point.id, marker);
     });
 
     if (visiblePoints.length) {
@@ -237,13 +245,17 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
     } else {
       map.fitBounds(initialBounds, { padding: [24, 24] });
     }
-  }, [visiblePoints, activePoint?.id]);
+  }, [visiblePoints, dict.zoomIn, dict.zoomOut]);
 
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !activePoint) return;
-    map.panTo([activePoint.lat, activePoint.lon], { animate: true, duration: 0.45 });
-  }, [activePoint?.id]);
+    for (const point of visiblePoints) {
+      markers.current.get(point.id)?.setIcon(markerIcon(point, point.id === activePoint?.id));
+    }
+    if (map && activePoint && activeId === activePoint.id) {
+      map.panTo([activePoint.lat, activePoint.lon], { animate: true, duration: 0.45 });
+    }
+  }, [activeId, activePoint, visiblePoints, dict.zoomIn, dict.zoomOut]);
 
   return (
     <div className="mb-16 overflow-hidden border border-slate-800 bg-slate-950 shadow-[0_28px_90px_rgba(15,23,42,0.22)]">
@@ -266,6 +278,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
                 key={item.value}
                 type="button"
                 onClick={() => setFiltered(item.value)}
+                aria-pressed={filter === item.value}
                 className={`flex min-h-12 items-center justify-between border px-4 text-left text-sm font-bold transition ${
                   filter === item.value
                     ? "border-[#7cc7ff] bg-[#0b4fa3] text-white shadow-[0_16px_38px_rgba(11,79,163,0.35)]"
@@ -324,7 +337,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
                 </div>
                 <h4 className="mt-7 text-3xl font-extrabold leading-tight">{activePoint.title}</h4>
                 <p className="mt-3 text-sm font-extrabold uppercase tracking-[0.08em] text-slate-500">{activePoint.area}</p>
-                <p className="mt-5 text-base font-bold text-[#0b4fa3]">{activePoint.client}</p>
+                {activePoint.client && <p className="mt-5 text-base font-bold text-[#0b4fa3]">{t.controls.organisation}: {activePoint.client}</p>}
                 <p className="mt-5 text-base leading-7 text-slate-700">{activePoint.scope}</p>
                 <div className="mt-7 grid grid-cols-2 gap-3 text-sm font-bold">
                   <span className="border border-slate-200 bg-slate-50 px-4 py-3">{activePoint.region}</span>
@@ -354,6 +367,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
                     key={point.id}
                     type="button"
                     onClick={() => setActiveId(point.id)}
+                    aria-pressed={activePoint?.id === point.id}
                     className={`grid grid-cols-[8px_1fr] gap-3 border px-3 py-3 text-left text-sm transition ${
                       activePoint?.id === point.id ? "border-[#0b4fa3] bg-[#eef6ff]" : "border-slate-200 hover:border-slate-400"
                     }`}
