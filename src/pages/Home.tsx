@@ -1,4 +1,4 @@
-import { Activity, ArrowRight, ChevronRight, Database, Factory, FlaskConical, MapPin, Mountain, Plane, Zap } from "lucide-react";
+import { Activity, ArrowRight, ChevronRight, Database, Factory, FlaskConical, MapPin, Mountain, Pause, Plane, Play, Zap } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
@@ -14,6 +14,7 @@ import heroTopoImg from "../assets/presentation/image3.webp";
 import Layout from "../layouts/MainLayout";
 import { useI18n } from "../i18n";
 import { useCmsContent } from "../cms";
+import { SERVICE_SLUGS, serviceCatalogBySlug } from "../content/serviceCatalog";
 
 const heroImages = [heroFieldImg, heroDroneImg, heroTopoImg];
 const serviceIcons = [Mountain, Activity, Zap, Plane, Factory, FlaskConical, Database];
@@ -24,23 +25,27 @@ export default function Home() {
   const reduceMotion = useReducedMotion();
   const [activeSlide, setActiveSlide] = useState(0);
   const featuredProjects = useMemo(() => cms.projectsGroups.flatMap((group: any) => group.projects).slice(0, 3), [cms.projectsGroups]);
+  const [slidesPlaying, setSlidesPlaying] = useState(!reduceMotion);
   const slide = t.home.heroSlides[activeSlide];
 
   useEffect(() => {
-    if (reduceMotion) return;
+    if (reduceMotion || !slidesPlaying) return;
     const timer = window.setInterval(() => {
       setActiveSlide((current) => (current + 1) % t.home.heroSlides.length);
     }, 6500);
     return () => window.clearInterval(timer);
-  }, [reduceMotion, t.home.heroSlides.length]);
+  }, [reduceMotion, slidesPlaying, t.home.heroSlides.length]);
 
-  const goNext = () => setActiveSlide((current) => (current + 1) % t.home.heroSlides.length);
+  const goNext = () => {
+    setSlidesPlaying(false);
+    setActiveSlide((current) => (current + 1) % t.home.heroSlides.length);
+  };
 
   const cycleServices = [
-    { service: cms.services[1], image: modelImg, color: "bg-[#0b4fa3]" },
-    { service: cms.services[0], image: fieldImg, color: "bg-[#218c54]" },
-    { service: cms.services[5], image: labImg, color: "bg-[#d71920]" },
-  ].filter((item) => item.service);
+    { slug: SERVICE_SLUGS[1], image: modelImg, color: "bg-[#0b4fa3]" },
+    { slug: SERVICE_SLUGS[0], image: fieldImg, color: "bg-[#218c54]" },
+    { slug: SERVICE_SLUGS[5], image: labImg, color: "bg-[#d71920]" },
+  ];
 
   return (
     <Layout>
@@ -49,8 +54,7 @@ export default function Home() {
           <img
             key={image}
             src={image}
-            alt={activeSlide === index ? slide.title : ""}
-            aria-hidden={activeSlide !== index}
+            alt=""
             loading={index === 0 ? "eager" : "lazy"}
             fetchPriority={index === 0 ? "high" : "auto"}
             decoding="async"
@@ -71,7 +75,7 @@ export default function Home() {
               <span className="flex h-11 w-11 items-center justify-center bg-[#0b4fa3] text-white"><ChevronRight className="h-6 w-6" aria-hidden="true" /></span>
               <span>{slide.chip}</span>
             </Link>
-            <button type="button" onClick={goNext} className="hero-chip place-items-center" aria-label={lang === "ru" ? "Следующий слайд" : lang === "zh" ? "下一张" : "Next slide"}>
+            <button type="button" onClick={goNext} className="hero-chip place-items-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4" aria-label={lang === "ru" ? "Следующий слайд" : lang === "zh" ? "下一张" : "Next slide"}>
               <ArrowRight className="h-9 w-9 text-white" aria-hidden="true" />
             </button>
           </div>
@@ -82,16 +86,23 @@ export default function Home() {
                 <button
                   key={index}
                   type="button"
-                  onClick={() => setActiveSlide(index)}
+                  onClick={() => { setSlidesPlaying(false); setActiveSlide(index); }}
                   className={`h-4 w-4 rounded-full border transition ${activeSlide === index ? "border-white bg-[#0b4fa3] ring-4 ring-white/25" : "border-white/60 bg-white/60"}`}
                   aria-label={`${lang === "ru" ? "Слайд" : lang === "zh" ? "幻灯片" : "Slide"} ${index + 1}`}
                   aria-current={activeSlide === index ? "true" : undefined}
                 />
               ))}
             </div>
-            <button type="button" onClick={goNext} aria-label={lang === "ru" ? "Следующий слайд" : lang === "zh" ? "下一张" : "Next slide"}>
-              <ArrowRight className="h-14 w-14 text-white" aria-hidden="true" />
-            </button>
+            {!reduceMotion && (
+              <button
+                type="button"
+                onClick={() => setSlidesPlaying((playing) => !playing)}
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/60 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4"
+                aria-label={slidesPlaying ? t.controls.pauseSlides : t.controls.resumeSlides}
+              >
+                {slidesPlaying ? <Pause aria-hidden="true" /> : <Play aria-hidden="true" />}
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -128,14 +139,13 @@ export default function Home() {
           </div>
 
           <div className="grid gap-4 lg:grid-cols-3">
-            {cycleServices.map(({ service, image, color }) => (
-              <Link key={service.slug} to={`/services/${service.slug}`} className="group block">
-                <img src={image} alt={service.title} className="h-[330px] w-full object-cover transition duration-500 group-hover:brightness-90" loading="lazy" decoding="async" />
+            {cycleServices.map(({ slug, image, color }) => (
+              <Link key={slug} to={`/services/${slug}`} className="group block">
+                <img src={image} alt="" className="h-[330px] w-full object-cover transition duration-500 group-hover:brightness-90" loading="lazy" decoding="async" />
                 <div className="grid grid-cols-[4px_1fr_42px] gap-8 border-b border-slate-200 py-8">
                   <span className={color} aria-hidden="true" />
                   <div>
-                    <h3 className="text-3xl font-extrabold leading-tight text-slate-950">{service.title}</h3>
-                    <p className="mt-5 text-lg leading-7 text-slate-700">{service.description}</p>
+                    <h3 className="text-3xl font-extrabold leading-tight text-slate-950">{serviceCatalogBySlug[slug].title[lang]}</h3>
                   </div>
                   <ChevronRight className="mt-2 h-7 w-7 text-[#0b4fa3]" aria-hidden="true" />
                 </div>
@@ -151,7 +161,6 @@ export default function Home() {
         <div className="site-container relative grid gap-12 lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <h2 className="text-4xl font-extrabold leading-tight md:text-5xl">{t.home.serviceTitle}</h2>
-            <p className="mt-7 text-xl leading-8 text-white/78">{t.home.serviceText}</p>
             <Link to="/services" className="btn-primary mt-10">{t.nav[1].label} <ArrowRight className="h-5 w-5" aria-hidden="true" /></Link>
           </div>
           <div className="grid gap-x-12 gap-y-8 md:grid-cols-2">
@@ -203,7 +212,7 @@ export default function Home() {
             <Link to="/careers" className="btn-primary mt-10">{t.nav[6].label} <ArrowRight className="h-5 w-5" aria-hidden="true" /></Link>
           </div>
           <div className="relative min-h-[480px] overflow-hidden">
-            <img src={uavImg} alt="БПЛА в полевых условиях" className="h-full min-h-[480px] w-full object-cover" loading="lazy" decoding="async" />
+            <img src={uavImg} alt="" className="h-full min-h-[480px] w-full object-cover" loading="lazy" decoding="async" />
             <Link to="/careers" className="absolute left-10 top-10 max-w-md bg-[#0b4fa3] p-10 text-white">
               <span className="flex items-center justify-between gap-8 text-3xl font-extrabold">{t.home.vacanciesTitle} <ChevronRight className="h-8 w-8" aria-hidden="true" /></span>
               <span className="mt-14 block text-xl font-semibold leading-8">{t.home.vacanciesText}</span>

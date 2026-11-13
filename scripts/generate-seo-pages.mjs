@@ -6,7 +6,7 @@ const DIST = path.resolve("dist");
 const LANGS = ["ru", "en", "zh"];
 
 const pages = [
-  ["/", "1.0", ["Геолого-геофизические исследования и геологоразведка | ТЕКТОНИКА", "ООО «ТЕКТОНИКА» выполняет геологические и геофизические исследования, магниторазведку, электроразведку, БПЛА-съёмку, топографию и камеральную обработку на Дальнем Востоке и по России."], ["Geological & Geophysical Surveys in Russia | TEKTONIKA", "TEKTONIKA provides geological and geophysical surveys, magnetic and electrical exploration, UAV mapping, topography, processing and reporting across Russia."], ["俄罗斯地质与地球物理勘探服务 | TEKTONIKA", "TEKTONIKA 在俄罗斯远东及全俄提供地质调查、地球物理勘探、磁法与电法勘探、无人机测绘、地形测量、数据处理和报告服务。"]],
+  ["/", "1.0", ["Геолого-геофизические исследования и геологоразведка | ТЕКТОНИКА", "ООО «ТЕКТОНИКА» выполняет геологические и геофизические исследования, магниторазведку, электроразведку, БПЛА-съёмку, топографию и камеральную обработку на Дальнем Востоке и по России."], ["Geological & Geophysical Surveys in Russia | TEKTONIKA", "TEKTONIKA provides geological and geophysical surveys, magnetic and electrical exploration, UAV mapping, topography, data processing and reporting across the Russian Far East and Russia."], ["俄罗斯地质与地球物理勘探服务 | TEKTONIKA", "TEKTONIKA 在俄罗斯远东及全俄提供地质调查、地球物理勘探、磁法与电法勘探、无人机测绘、地形测量、数据处理和报告服务。"]],
   ["/services", "0.9", ["Геофизические и геологоразведочные услуги | ТЕКТОНИКА", "Полный цикл геолого-геофизических работ: геология, магниторазведка, электроразведка, БПЛА, топография, лаборатория, обработка и интерпретация."], ["Geophysical & Geological Exploration Services | TEKTONIKA", "Full-cycle geological and geophysical services: geology, magnetic and electrical surveys, UAV mapping, topography, laboratory measurements, processing and interpretation."], ["地球物理与地质勘探服务 | TEKTONIKA", "全周期地质与地球物理服务：地质、磁法、电法、无人机测绘、地形测量、实验室测量、数据处理与解释。"]],
   ["/projects", "0.9", ["Проекты геологоразведки и геофизики | ТЕКТОНИКА", "Проекты ООО «ТЕКТОНИКА» и опыт команды в аэромагниторазведке, электроразведке, геохимических поисках и камеральной обработке в регионах России."], ["Geological & Geophysical Survey Projects | TEKTONIKA", "TEKTONIKA projects and team experience in UAV aeromagnetic surveys, electrical exploration, geochemical prospecting and data interpretation across Russia."], ["地质与地球物理勘探项目 | TEKTONIKA", "了解 TEKTONIKA 在俄罗斯各地区开展的无人机航空磁测、电法勘探、地球化学找矿和数据解释项目。"]],
   ["/about", "0.8", ["О компании ООО «ТЕКТОНИКА» | Геология и геофизика", "ООО «ТЕКТОНИКА» — инженерная геолого-геофизическая команда из Хабаровска: поле, БПЛА, производство, обработка и техническая отчётность."], ["About TEKTONIKA | Geological & Geophysical Engineering", "TEKTONIKA is a Khabarovsk-based geological and geophysical engineering team combining field surveys, UAV technology, production, processing and reporting."], ["关于 TEKTONIKA | 地质与地球物理工程", "TEKTONIKA 是位于哈巴罗夫斯克的地质与地球物理工程团队，涵盖野外调查、无人机技术、自主生产、数据处理和技术报告。"]],
@@ -79,7 +79,7 @@ function addAlternates(html, page) {
     ["en", localeUrl(page.path, "en")],
     ["zh-CN", localeUrl(page.path, "zh")],
     ["x-default", localeUrl(page.path, "ru")],
-  ].map(([hreflang, href]) => `<link rel="alternate" hreflang="${hreflang}" href="${href}" />`).join("\n    ");
+  ].map(([hreflang, href]) => `<link rel="alternate" hreflang="${hreflang}" href="${href}" data-seo-alternate="true" />`).join("\n    ");
   return html.replace("</head>", `    ${tags}\n  </head>`);
 }
 
@@ -102,13 +102,14 @@ function renderPage(template, page, lang) {
   const [title, description] = page[lang];
   const canonical = localeUrl(page.path, lang);
   let html = template.replace(/<html\s+lang=["'][^"']+["']/i, `<html lang="${lang === "zh" ? "zh-CN" : lang}"`);
-  html = html.replace(/<title>[^<]*<\/title>/i, `<title>${title}</title>`);
+  html = html.replace(/<title>[^<]*<\/title>/i, `<title>${escapeXml(title)}</title>`);
   html = replaceMeta(html, "description", description);
   html = replaceMeta(html, "robots", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
   html = replaceMeta(html, "googlebot", "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1");
   html = replaceMeta(html, "property:og:title", title);
   html = replaceMeta(html, "property:og:description", description);
   html = replaceMeta(html, "property:og:url", canonical);
+  html = replaceMeta(html, "property:og:locale", { ru: "ru_RU", en: "en_US", zh: "zh_CN" }[lang]);
   html = replaceMeta(html, "twitter:title", title);
   html = replaceMeta(html, "twitter:description", description);
   html = replaceCanonical(html, canonical);
@@ -119,7 +120,9 @@ function renderPage(template, page, lang) {
 
 async function main() {
   const indexPath = path.join(DIST, "index.html");
-  const template = await fs.readFile(indexPath, "utf8");
+  const template = (await fs.readFile(indexPath, "utf8"))
+    .replace(/(\b(?:src|href)=["'])\.\//g, "$1/")
+    .replace(/<script\b[^>]*data-static-seo="true"[^>]*>[\s\S]*?<\/script>/g, "");
 
   for (const page of allPages) {
     for (const lang of LANGS) {
