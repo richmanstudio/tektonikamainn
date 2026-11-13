@@ -190,6 +190,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
     const map = L.map(mapElementRef.current, {
       attributionControl: false,
       zoomControl: false,
+      zoomAnimation: false,
       scrollWheelZoom: false,
       maxBoundsViscosity: 0.45,
     });
@@ -205,6 +206,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
     mapRef.current = map;
 
     return () => {
+      map.stop();
       map.remove();
       mapRef.current = null;
       markerLayerRef.current = null;
@@ -241,7 +243,7 @@ export default function ProjectsGeoMap({ groups, lang }: { groups: ProjectGroup[
 
     if (visiblePoints.length) {
       const bounds = L.latLngBounds(visiblePoints.map((point) => [point.lat, point.lon] as [number, number]));
-      map.fitBounds(bounds.pad(0.32), { paddingTopLeft: [28, 28], paddingBottomRight: [28, 28], maxZoom: 6, animate: true });
+      map.fitBounds(bounds.pad(0.32), { paddingTopLeft: [28, 28], paddingBottomRight: [28, 28], maxZoom: 6, animate: false });
     } else {
       map.fitBounds(initialBounds, { padding: [24, 24] });
     }
