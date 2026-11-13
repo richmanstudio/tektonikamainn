@@ -25,7 +25,7 @@ const zh: Dictionary = {
     cycleText: "根据区块选择技术：从路线和测量到处理与图件成果。",
     serviceTitle: "地质与地球物理服务",
     projectsTitle: "项目与地域",
-    projectsText: "精选公司项目及团队成员参与的项目。",
+    projectsText: "公司项目和团队经验分开展示：哈巴罗夫斯克、滨海、楚科奇、马加丹和雅库特。",
     careersTitle: "招聘",
     careersText: "我们寻找野外任务专家，并支持项目制工作。",
     vacanciesTitle: "野外作业职位",

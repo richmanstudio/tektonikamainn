@@ -196,7 +196,7 @@ export default function Home() {
                   <span className="inline-flex items-center gap-2"><MapPin className="h-4 w-4 text-[#d71920]" aria-hidden="true" />{project.region}</span>
                 </div>
                 <h3 className="text-3xl font-extrabold leading-tight text-slate-950">{project.title}</h3>
-                {project.client && <p className="mt-4 text-lg font-bold text-[#0b4fa3]">{t.controls.organisation}: {project.client}</p>}
+                <p className="mt-4 text-lg font-bold text-[#0b4fa3]">{project.client}</p>
                 <p className="mt-6 text-base leading-7 text-slate-700">{project.scope}</p>
               </article>
             ))}

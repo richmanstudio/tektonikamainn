@@ -24,7 +24,7 @@ const en: Dictionary = {
     cycleText: "Technologies are selected for each site: from routes and measurements to processing and graphic deliverables.",
     serviceTitle: "Geological and geophysical services",
     projectsTitle: "Projects and geography",
-    projectsText: "Selected company projects and projects our team members worked on.",
+    projectsText: "Company projects and team experience are separated: Khabarovsk Krai, Primorye, Chukotka, Magadan Region and Yakutia.",
     careersTitle: "Careers",
     careersText: "We are looking for specialists for field tasks and support project-based employment.",
     vacanciesTitle: "Fieldwork vacancies",
